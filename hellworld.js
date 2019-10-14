@@ -1,2 +1,2 @@
-console.log("hhh")
+console.log("h")
 
