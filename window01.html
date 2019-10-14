@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body >
+    <button>刷新</button>
+    <button onclick="javascript:history.back()">回  去</button>
+    <button onclick="javascript:history.go(-1)">回  去</button>
+    <script>
+            //窗体对象 加载函数的 onload="myfun()"
+            //window.onload
+            function myfun(){
+                window.alert('我被加载啦！')
+            }
+            //window.onload=myfun;
+           // window.confirm('你确定要这么干吗？');
+           //输入对话框 用来接收外部传来的参数
+          // window.prompt("请你输入内容：","这是初始值");
+           //console.log(window.self);
+        //  alert('我即将被换行了\n我换行下来了！');
+        //这种换行它在window对象中不认
+          //alert('我即将被换行了<br>我换行下来了！');
+         // document.write('我即将被换行了<br>我换行下来了！');
+
+     /*    var okay = window.confirm('你确定要关闭吗？');
+        console.log(okay)
+        if(okay){
+            //alert('是的');
+            window.close();
+        }else{
+            //alert('不是的');
+        } */
+        //location.href='http://www.baidu.com';
+        console.log(location.href);
+        console.log(location.protocol);
+        console.log(location.host);
+        console.log(location.port);
+        //location.reload("for01.html");
+
+    </script>
+</body>
+</html>
