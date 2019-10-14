@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title style="color:red;">offseTop...</title>
+<script>
+	
+	function init() {
+		//获取窗口宽度
+		var winWidth;
+		if (window.innerWidth) {
+			winWidth = window.innerWidth;
+		} else if ((document.body) && (document.body.clientWidth)) {
+			winWidth = document.body.clientWidth;
+		}
+		console.log("document.body.offsetWidth:" + document.body.offsetWidth);
+		console.log("document.body.offsetHeight :" + document.body.offsetHeight );
+		document.body.onclick = function(){
+			console.log(document.getElementById("testDiv1").scrollTop);
+			console.log(document.getElementById("testDiv1").scrollLeft);
+		};
+		console.log(document.getElementById("testDiv1").scrollHeight);
+		console.log(document.getElementById("testDiv1").scrollWidth);
+	}
+</script>
+<style>
+	body {
+		margin:0px;
+		padding:0;
+		font: 13px/1.5 '\5FAE\8F6F\96C5\9ED1',Tahoma,Arial,Helvetica,sans-serif;
+	}
+	.testDiv1 {
+		width: 300px;
+		height: 100px;
+		border: 1px solid yellow;
+		margin: 10px;
+		overflow: scroll;
+	}
+	
+	.testDiv2 {
+		width: 400px;
+		height: 200px;
+		border: 1px solid red;
+		margin: 10px;
+		padding: 10px;
+	}
+</style>
+</head>
+<body onload="init();"> 
+	<div id="testDiv1" class="testDiv1">
+		<div>
+			<div id="testDiv2" class="testDiv2"></div>
+			<div id="testDiv3" class="testDiv2">
+				<div id="testDiv5" class="testDiv2"></div>
+			</div>
+		</div>
+	</div>
+	<div style="margin-left: 15px;">
+		window.screen.height;  屏幕分辨率高<br>
+		window.screen.width;   屏幕分辨率宽<br><br>
+		window.screen.availWidth   当前屏幕宽度(空白空间)<br>
+		window.screen.availHeight  当前屏幕高度(空白空间)<br><br>
+		window.screenTop;/ window.screenX;(firefox)  需要兼容浏览器，IE是document左上角与屏幕上边距离，其他的都是浏览器上边缘与屏幕上边距离<br>
+		window.screenLeft;/ window.screenX;(firefox) 需要兼容浏览器，IE是document左上角与屏幕左边距离，其他的都是浏览器左边缘与屏幕左边距离<br><br>
+		dom.<span style="color:red;">clientLeft</span>; 元素左边框宽度<br>
+		dom.<span style="color:red;">clientTop</span>; 元素上边框宽度<br><br>
+		dom.<span style="color:red;">clientWidth</span>; 可见内容区域宽(只包括 padding，即使有 box-sizing)，如果有竖直滚动条，要减去滚动条宽度<br><br>
+		<div style="margin-left:25px;">
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;" id="test1"></div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test1-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;box-sizing:border-box;" id="test1-1-1"></div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test1-1-2"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;padding:0 10px;" id="test3">有padding</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test3-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;overflow:auto;" id="test2">
+				<div style="width:100px;height:100px;border:5px solid red;float:left;"></div>
+			</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test2-1"></div>
+		</div>
+		<script>
+			(function(){
+				document.getElementById("test1-1").innerHTML = "clientWidth: "+document.getElementById("test1").clientWidth;
+				document.getElementById("test1-1-2").innerHTML = "clientWidth: "+document.getElementById("test1-1-1").clientWidth;
+				document.getElementById("test2-1").innerHTML = "clientWidth: "+document.getElementById("test2").clientWidth;
+				document.getElementById("test3-1").innerHTML = "clientWidth: "+document.getElementById("test3").clientWidth;
+			})();
+		</script>
+		<div style="clear:both;"></div><br>
+		<div style="line-height:1.7;margin-top:5px;">
+			<span style="margin-left:25px;color:violet;">document.body.clientWidth 和 document.documentElement.clientWidth 区别 (<span style="color:red;">注意宽度都不包括滚动条</span>)：</span><br>
+			<span style="margin-left:50px;">如果页面声明 DOCTYPE：document.body.clientWidth 是 body 中内容可见区域宽(只包括padding)，document.documentElement.clientWidth 是<span style="color:violet;">浏览器可视内容区域</span>宽度</span><br>
+			<span style="margin-left:50px;">如果页面没声明 DOCTYPE：document.body.clientWidth 是浏览器可视内容区域宽度，document.documentElement.clientWidth 是 html 中内容可见区域宽(只包括padding)</span><br>
+			<span style="margin-left:50px;color:violet;">以上 FF、chrome 都适应，IE 只适应声明 DOCTYPE 情况。</span><br>
+			<span style="margin-left:50px;">对于 IE 没声明 DOCTYPE：</span><br>
+			<span style="margin-left:75px;">IE8、IE9 中，没有设置&lt;meta http-equiv="X-UA-Compatible" content="IE=8" />来保持 IE8/IE9 模式，浏览器模式会变为“杂项”，这时：</span><br>
+			<span style="margin-left:100px;">document.documentElement.clientWidth 始终为0，document.body.clientWidth 浏览器可视部分宽度</span><br>
+			<span style="margin-left:75px;">IE10、IE11 中没有特别的设置，document.documentElement.clientWidth == document.body.clientWidth == 浏览器可视部分宽度</span><br>
+		</div><br>
+		dom.<span style="color:red;">clientHeight</span>; 内容可见区域高(只包括 padding，即使有 box-sizing)，如果有水平滚动条，要减去滚动条高度<br>
+		<div style="line-height:1.7;margin-top:5px;">
+			<span style="margin-left:25px;color:violet;">document.body.clientHeight 和 document.documentElement.clientHeight 区别：</span><br>
+			<span style="margin-left:50px;">如果页面声明 DOCTYPE：document.body.clientHeight 是 body 中内容可见区域高(只包括padding)，document.documentElement.clientHeight 是<span style="color:violet;">浏览器可视内容区域</span>高度</span><br>
+			<span style="margin-left:50px;">如果页面没声明 DOCTYPE：document.body.clientHeight 是浏览器可视内容区域高度，document.documentElement.clientHeight 是 html 中内容可见区域高(只包括padding)</span><br>
+			<span style="margin-left:50px;color:violet;">以上 FF、chrome 都适应，IE 只适应声明 DOCTYPE 情况。</span><br>
+			<span style="margin-left:50px;">对于 IE 没声明 DOCTYPE：</span><br>
+			<span style="margin-left:75px;">IE8、IE9 中，没有设置&lt;meta http-equiv="X-UA-Compatible" content="IE=8" />来保持 IE8/IE9 模式，浏览器模式会变为“杂项”，这时：</span><br>
+			<span style="margin-left:100px;">document.documentElement.clientHeight 始终为0，document.body.clientHeight 浏览器可视部分高度</span><br>
+			<span style="margin-left:75px;">IE10、IE11 中没有特别的设置，document.documentElement.clientHeight == document.body.clientHeight == 浏览器可视部分高度</span><br>
+		</div><br>
+		dom.<span style="color:red;">offsetWidth</span>;  元素 <i>左边框左侧</i> 到 <i>右边框右侧</i> &nbsp;距离<br><br>
+		<div style="margin-left:25px;">
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;" id="test4"></div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test4-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;padding:0 10px;" id="test5">有padding</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test5-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;overflow:auto;" id="test6">
+				<div style="width:100px;height:100px;border:5px solid red;float:left;"></div>
+			</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test6-1"></div>
+		</div>
+		<script>
+			(function(){
+				document.getElementById("test4-1").innerHTML = "offsetWidth: "+document.getElementById("test4").offsetWidth;
+				document.getElementById("test5-1").innerHTML = "offsetWidth: "+document.getElementById("test5").offsetWidth;
+				document.getElementById("test6-1").innerHTML = "offsetWidth: "+document.getElementById("test6").offsetWidth;
+			})();
+		</script>
+		<div style="clear:both;"></div><br>
+		dom.<span style="color:red;">offsetHeight</span>; 元素 <i>上边框顶部</i> 到 <i>下边框底部</i> &nbsp;距离<br><br>
+		
+		dom.<span style="color:red;">offsetTop</span>; <br>
+		<div style="margin-left: 40px;line-height:1.7;">
+			<div>
+			假设这个元素是 A，这里暂且不考虑 position:fixed: <br>
+			如果 A 的外层元素中有的设置了 position:relative/absolute 属性，那么 A 的 offsetTop 就是：A与最近一个设置该属性的父辈元素的两个 top-border 的距离（不包括 border），<br>
+			</div>
+			<div style="float:left;position:relative;width:100px;height:50px;border:5px solid black;">
+				<div id="test123" style="position:absolute;top:5px;width:50px;height:25px;border:5px solid black;">A</div>
+			</div>
+			<div style="float:left;margin-left:170px;position:relative;width:100px;height:50px;border:5px solid black;">
+				<div id="test1234" style="margin-top:10px;width:50px;height:25px;border:5px solid black;">A</div>
+			</div>
+			<div style="float:left;margin-left:200px;position:relative;width:100px;height:90px;border:5px solid black;">
+				<div style="width:50px;height:25px;border:5px solid black;">A</div>
+				<div id="test12345" style="margin-top:10px;width:50px;height:25px;border:5px solid black;">B</div>
+			</div>
+			<div style="clear:both;"></div>
+			<span style="color:red;">A设置 top:5px;，offsetTop 是 ：<span id="testV"></span></span>
+			<span style="color:red;margin-left:70px;">A设置 margin-top:10px;，offsetTop 是 ：<span id="testV1"></span></span>
+			<span style="color:red;margin-left:40px;">B设置 margin-top:10px;，offsetTop 是 ：<span id="testV3"></span></span>
+			<script>
+				(function(){
+					document.getElementById("testV").innerHTML = document.getElementById("test123").offsetTop;
+					document.getElementById("testV1").innerHTML = document.getElementById("test1234").offsetTop;
+					document.getElementById("testV3").innerHTML = document.getElementById("test12345").offsetTop;
+				})();
+			</script>
+			<div style="margin-top:3px;">
+			如果 A 的外层元素中都没有设置 position 属性: <br>
+			<span style="margin-left:25px;">A 没有设置 position:absolute，A 的 offsetTop 是：A 的 top-border 到 html border 顶部的距离（注意包括 html 的 border 宽度）。</span><br>
+			<span style="margin-left:25px;">A 设置 position:absolute，A 的 offsetTop 是：A 的 top-border 到 document top 的距离（跟 html、body 没有任何关系）。</span><br>
+			在 Chrome、Opera、Safari、IE8、IE9 和 IE10 中，工作正常，document.body.offsetTop 的值为 0。<br>
+			在 FireFox 中，offsetTop 的值为负的 body 元素的 border-top-width。<br>
+			在 IE7 中，offsetTop 是 body 元素的边框（不包括边框）到 document 上边的距离。
+			</div>
+		</div><br>
+		dom.<span style="color:red;">offsetLeft</span>;<br>
+		<div style="margin-left: 40px;">
+			与 offsetTop 类似<br>
+			在Chrome、Opera、Safari、IE8、IE9和IE10中，工作正常，document.body.offsetLeft的值为0。<br>
+			在FireFox中，offsetLeft的值为负的body元素的border-left-width。<br>
+			在IE7中，offsetLeft指的是body元素对象的边框（不包括边框）到document左边的距离。
+		</div><br>
+		dom.<span style="color:red;">scrollWidth</span>; 标签中所有内容的宽度(包括内容的margin，border，padding)，如果没有出现水平滚动条，那么 scrollWidth==clientWidth<br>
+		<span style="margin-left:25px;color:violet;">IE8/IE9 页面没有声明 DOCTYPE 的话，会有出入。</span><br><br>
+		<div style="margin-left:25px;">
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;" id="test7">空白</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test7-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;padding:0 10px;" id="test8">有padding</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test8-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;overflow:auto;" id="test9">
+				标签中所有内容的高度，如果没有出现竖直滚动条标签中所有内容的高度，如果没有出现竖直滚动条
+			</div>
+			<div style="width:100px;height:50px;float:left;line-height:50px;" id="test9-1"></div>
+			<div style="margin-left:25px;width:50px;height:50px;border:5px solid red;float:left;overflow:auto;" id="test10">
+				<div style="width:100px;height:100px;border:1px solid black;float:left;margin:15px;">margin</div>
+			</div>
+			<div style="width:120px;height:50px;float:left;line-height:25px;" id="test10-1"></div>
+		</div>
+		<script>
+			(function(){
+				document.getElementById("test7-1").innerHTML = "scrollWidth: "+document.getElementById("test7").scrollWidth;
+				document.getElementById("test8-1").innerHTML = "scrollWidth: "+document.getElementById("test8").scrollWidth;
+				document.getElementById("test9-1").innerHTML = "scrollWidth: "+document.getElementById("test9").scrollWidth;
+				document.getElementById("test10-1").innerHTML = "scrollWidth: "+document.getElementById("test10").scrollWidth + "<br>右边 margin 无效";
+			})();
+		</script>
+		<div style="clear:both;"></div><br>
+		<div style="line-height:1.7;margin-top:5px;">
+			<span style="margin-left:25px;color:violet;">document.body.scrollWidth 和 document.documentElement.scrollWidth 区别 (注意宽度都不包括滚动条)：</span><br>
+			<span style="margin-left:50px;">如果页面声明 DOCTYPE：</span><br>
+			<span style="margin-left:75px;">FF、IE：document.body.scrollWidth --> body中内容宽度，document.documentElement.scrollWidth --> 浏览器中所有内容宽度</span><br>
+			<span style="margin-left:75px;">chrome：document.body.scrollWidth --> 浏览器中所有内容宽度，document.documentElement.scrollWidth --> html中内容宽度</span><br>
+			<span style="margin-left:50px;">如果页面没声明 DOCTYPE：</span><br>
+			<span style="margin-left:75px;">FF：document.body.scrollWidth --> 浏览器中所有内容宽度，document.documentElement.scrollWidth --> html中内容宽度</span><br>
+			<span style="margin-left:75px;">chrome：与页面声明 DOCTYPE 一样</span><br>
+			<span style="margin-left:75px;">IE10/11：document.body.scrollWidth == document.documentElement.scrollWidth == 浏览器中所有内容宽度</span><br>
+			<span style="margin-left:75px;">IE8/9：还是建议写上 DOCTYPE 吧</span><br>
+		</div><br>
+		dom.<span style="color:red;">scrollHeight</span>;标签中所有内容的高度，如果没有出现竖直滚动条，那么 scrollHeight==clientHeight<br><br>
+		dom.<span style="color:red;">scrollTop</span>;  获取滚动条向下滚动过的像素数，也就是内容部分上边已经隐藏的高度，等价于$("#testDiv1").scrollTop()<br>
+		<div style="line-height:1.7;margin-top:5px;">
+		<span style="margin-left:25px;">在 FF 里：如果设置 DOCTYPE，使用 document.documentElement.scrollTop，否则使用 document.body.scrollTop。</span><br>
+		<span style="margin-left:25px;">在 chrome 里：都使用 document.body.scrollTop。</span><br>
+		<span style="margin-left:25px;">在 IE 里：如果设置 DOCTYPE，使用 document.documentElement.scrollTop，不建议去掉 DOCTYPE。</span><br>
+		<span style="margin-left:25px;">有的浏览器使用window.pageYOffset，比如safari 、chrome，兼容写法：</span><br>
+		<span style="margin-left:50px;">var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;</span><br>
+		<span style="margin-left:25px;">有时候动画也是通过改变 scrollTop、scrollLeft 来实现：</span><br>
+		<style>
+			.co4_main {width: 560px;padding: 10px 0 5px 10px;float: left;}
+			#demo {background: #FFF;overflow: hidden;width: 560px;}
+			#demo1 {float: left;}
+			#demo2 {float: left;}
+			#indemo {float: left;width: 800%;}
+			ul, li {margin: 0px;padding: 0px;}
+			ul li a div {width:100px;height:50px;}
+			ul, li {list-style-type: none;}
+			.co4_main li {float: left;margin-right: 10px;width: 100px;}
+		</style>
+		<div class="co4_main">
+				<div id="demo">
+					<div id="indemo">
+					  <div id="demo1">
+							<ul>
+								<li><a href="http://www.baidu.com"><div style="background:red;">1</div></a></li>
+								<li><a href="http://www.baidu.com"><div style="background:blue;">2</div></a></li>
+								<li><a href="http://www.baidu.com"><div style="background:yellow;">3</div></a></li>
+								<li><a href="http://www.baidu.com"><div style="background:violet;">4</div></a></li>
+								<li><a href="http://www.baidu.com"><div style="background:skyblue;">5</div></a></li>
+							</ul>
+					  </div>
+					  <div id="demo2">
+							
+					  </div>
+					</div>
+            </div>
+      </div>
+		<script>
+			var speed=20;
+			window.requestAnimFrame = (function(){//如果浏览器不支持requestAnimationFrame，则使用setTimeout
+				return window.requestAnimationFrame || 
+					window.webkitRequestAnimationFrame || 
+					window.mozRequestAnimationFrame || 
+					window.oRequestAnimationFrame || 
+					window.msRequestAnimationFrame || 
+					function(callback, element) {
+						return window.setTimeout(callback, speed);
+					}
+			})();
+			if (!window.cancelAnimationFrame) {//兼容取消函数
+				window.cancelAnimationFrame = function(id) {
+					console.log(id);
+					window.clearTimeout(id);
+				};
+			}
+			(function(){
+				var tab = document.getElementById("demo");
+				var tab1 = document.getElementById("demo1");
+				var tab2 = document.getElementById("demo2");
+				tab2.innerHTML = tab1.innerHTML;
+				function Marquee(){
+					// 判断位置，设置 scrollLeft 大小
+					if(tab2.offsetWidth - tab.scrollLeft <= 0) {
+						tab.scrollLeft -= tab1.offsetWidth;
+					} else {
+						tab.scrollLeft++;
+					}
+					MyMar = window.requestAnimFrame(Marquee, speed);
+				}
+				var MyMar = window.requestAnimFrame(Marquee, speed);
+				tab.onmouseover=function() {window.cancelAnimationFrame(MyMar)};
+				tab.onmouseout=function() {MyMar=window.requestAnimFrame(Marquee,speed)};
+			})();
+		</script>
+		</div>
+		<br>
+		<br>
+		<br>
+		<br>
+		document.getElementById("testDiv1").<span style="color:red;">scrollLeft</span>;  获取滚动条向右滚动过的像素数，也就是内容部分左边已经隐藏的宽度，等价于$("#testDiv1").scrollLeft()<br>
+		<br>>
+	</div><br><br>
+</body>  
+</html>

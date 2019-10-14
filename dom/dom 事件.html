@@ -1,0 +1,1926 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>事件</title>
+<style>
+    body {
+		font-family: microsoft yahei;
+		font-size: 14px;
+		line-height: 1.7;
+		color: #333;
+	}
+	.main {
+		margin: 15px;
+		width: 980px;
+	}
+	h5 {
+		margin-bottom: 5px;
+	}
+	table.dataintable {
+		margin-top: 10px;
+		border-collapse: collapse;
+		border: 1px solid #aaa;
+		width: 100%;
+	}
+	* {
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	table.dataintable td {
+		vertical-align: text-top;
+		padding: 3px 5px 3px 6px;
+		background-color: #efefef;
+		border: 1px solid #aaa;
+	}
+	table.dataintable th {
+		vertical-align: baseline;
+		padding: 5px 15px 5px 6px;
+		background-color: #d5d5d5;
+		border: 1px solid #aaa;
+		text-align: left;
+	}
+	a:link, a:visited {
+		text-decoration: none;
+		color: #900b09;
+		background: transparent;
+	}
+	ul {
+		list-style: none;
+	}
+	.hasUnderLine li {
+		border-bottom:1px solid #CCCCCC;
+	}
+	pre {
+		background: #e4f0f5;
+		white-space: pre-wrap;
+		padding: 10px 10px 10px 20px;
+		margin: 15px 0;
+		border: 0 solid #3f87a6;
+		border-left-width: 5px!important;
+		color: #333;
+		line-height: 1.5;
+		font-family: consolas,monaco,"Andale Mono",monospace;
+	}
+	code {
+		color: #3f87a6;
+		font-family: consolas,monaco,"Andale Mono",monospace;
+	}
+	i {
+		color: #666;
+	}
+	.string {
+		color: green;
+		font-size: 13px;
+	}
+	.toke {
+		color: #690;
+	}
+	.function {
+		color: #DD4A68;
+	}
+	.keyword {
+		color: #07a;
+	}
+	body {
+		counter-reset: section 0;
+	}
+	h5 {
+		counter-increment: section 1;
+	}
+	h5::before {
+		content: counter(section) '、';
+	}
+</style>
+</head>
+<body>
+<div class="main">
+	<div style="position:fixed;top:15px;left:1000px;">
+		<span style="font-weight:bold;">目录：</span><br>
+		<ol style="padding-left:25px;">
+			<li><a style="margin-left:5px;" href="#addEvent">添加事件方式</a></li>
+			<li><a style="margin-left:5px;" href="#eve">attachEvent、detachEvent、addEventListener、removeEventListener</a></li>
+			<li><a style="margin-left:5px;" href="#load">onload、DOMContentLoaded、onbeforeunload、onunload、onreadystatechange</a></li>
+			<li><a style="margin-left:5px;" href="#change">onchange、onpropertychange、oninput</a></li>
+			<li><a style="margin-left:5px;" href="#scroll">onscroll、mousewheel \ DOMMouseScroll、onresize \ onorientation</a></li>
+			<li><a style="margin-left:5px;" href="#event">Event 对象</a><br>
+				<a style="margin-left:25px;" href="#eventP">Event 标准属性</a><br>
+				<a style="margin-left:25px;" href="#eventM">Event 标准方法（包括自定义事件）</a><br>
+				<a style="margin-left:25px;" href="#eventO">获取 event 对象</a>
+			</li>
+			<li><a style="margin-left:5px;" href="#phase">事件阶段</a></li>
+			<li><a style="margin-left:5px;" href="#target">srcElement、currentTarget、target</a></li>
+			<li><a style="margin-left:5px;" href="#moveDom">操作 dom 对事件影响</a></li>
+			<li><a style="margin-left:5px;" href="#mobileEvent">手机事件</a></li>
+			<li><a style="margin-left:5px;" href="#eventWeiTuo">事件委托</a></li>
+			<li><a style="margin-left:5px;" href="#eventCT">事件穿透</a></li>
+			<li><a style="margin-left:5px;" href="#keyEvent">键盘事件</a></li>
+			<li><a style="margin-left:5px;" href="#mouseEvent">鼠标事件</a></li>
+			<li><a style="margin-left:5px;" href="#printEvent">打印事件</a></li>
+			<li><a style="margin-left:5px;" href="#copyEvent">剪贴板事件</a></li>
+			<li><a style="margin-left:5px;" href="#dragEvent">拖动事件</a></li>
+			<li><a style="margin-left:5px;" href="#mediaEvent">多媒体（Media：<audio>, <video>）事件</a></li>
+			<li><a style="margin-left:5px;" href="#animationEvent">动画事件</a></li>
+			<li><a style="margin-left:5px;" href="#transitionEvent">过渡事件</a></li>
+			<li><a style="margin-left:5px;" href="#formEvent">表单事件</a></li>
+			<li><a style="margin-left:5px;" href="#frameEvent">框架/对象（Frame/Object）事件</a></li>
+			<li><a style="margin-left:5px;" href="#otherEvent">其他事件</a></li>
+		</ol>
+	</div>
+	<br>
+	<h5 id="addEvent">添加事件方式</h5>
+	<div style="margin-left:25px;">
+		① 使用标签属性: <br>
+		<code style="margin-left:35px">onclick="alert('simple');" </code><br>
+		② JavaScript: <br>
+		<code style="margin-left:35px">element.onclick = function(e){}</code> <span style="color:green;">//IE8-没有参数 e，兼容写法：e=e || window.event;</span><br>
+		③ attachEvent、addEventListener: <br>
+		<code style="margin-left:35px">element.attachEvent("click", function(){})</code><br>
+		<code style="margin-left:35px">element.addEventListener("click", function(){}, false)</code><br>
+		④ jQuery的一些方法。好处是即使元素位置发生变动，事件仍然在。<br>
+	</div><br>
+	<h5 id="eve">attachEvent、detachEvent ( IE6 - IE10)<br>
+	<span style="margin-left:22px;">addEventListener、removeEventListener ( IE9+、其他浏览器 )</span></h5>
+	<div style="margin-left:25px;">共同点：都可以在同一节点上绑定多个相同事件。</div>
+	<div style="margin-left:25px;">不同点：addEventListener 支持事件阶段，而 attachEvent 不支持。参见<a href="#phase">“事件阶段”</a></div>
+	<div style="height:10px;"></div>
+	<div style="margin-left:25px;">1、attachEvent、detachEvent</div>
+	<div style="margin-left:50px;">只有使用 <code>attachEvent</code> 添加的事件，才可以被 <code>detachEvent</code> 方法移除。</div>
+	<div style="margin-left:50px;">注册多个事件，执行顺序：</div>
+	<pre style="margin-left:75px;">
+var btn1Obj = document.getElementById("btn1");
+btn1Obj.attachEvent("onclick",method1);
+btn1Obj.attachEvent("onclick",method2);
+btn1Obj.attachEvent("onclick",method3);
+<span style="color:green;">// 执行顺序为method3->method2->method1 </span></pre>
+	
+	<div style="margin-left:25px;">2、addEventListener、removeEventListener</div>
+	<div style="margin-left:50px;">两个方法都接受3个参数：事件名、事件处理函数、布尔值（Chrome 51 和 Firefox 49 新增 options 参数）。</div>
+	<div style="margin-left:75px;"><pre>target.removeEventListener(type, listener[, useCapture]);
+target.removeEventListener(type, listener[, options]);</pre></div>
+	<div style="margin-left:75px;">useCapture
+		<ul style="margin-left: 50px;list-style-type: disc;">
+			<li><code>true</code>: 在捕获阶段调用事件处理程序</li>
+			<li><code>false</code>: 默认值, 在冒泡阶段调用事件处理程序。</li>
+		</ul>
+	</div>
+	<div style="margin-left:75px;">options
+		<ul style="margin-left: 50px;list-style-type: disc;">
+			<li><code>capture</code>: 同 useCapture</li>
+			<li><code>once</code>: true 表示只调用一次，调用之后自动移除。</li>
+			<li><code>passive</code>: 值为 true，表示 listener 永远不会调用 preventDefault()。如果仍然调用，客户端将会忽略它并抛出一个控制台警告。
+			<p>比如当你触摸滑动页面时，页面应该跟随手指一起滚动，而此时你绑定了一个 touchstart 事件，你的事件大概执行 200 毫秒。<br>
+	这时浏览器就犯迷糊了：如果你在事件绑定函数中调用了 preventDefault，那么页面就不应该滚动，如果你没有调用 preventDefault，页面就需要滚动。
+	但浏览器不知道你调用了没有，只能先执行绑定函数，等 200 毫秒事件执行完，浏览器才知道，“哦，原来你没有阻止默认行为，好的，我马上滚”。此时，页面开始滚。<br>
+	{ passive: true } 就是为了能够提前告诉浏览器：“我不调用 preventDefault 函数来阻止事件事件行为”，那么浏览器就能快速生成事件，从而提升页面性能。<br>
+	当前仅支持 mousewheel / touch 相关事件。</p></li>
+		</ul>
+	</div>
+	<div style="margin-left:100px;">
+		<p>判断浏览器是否支持 passive：</p>
+		<pre>var supportsPassive = false;
+try {
+  <span style="color:#42b983;">// 定义 passive 属性，用到 passive 时，系统会调用 get 方法</span>
+  var opts = Object.defineProperty({}, 'passive', {
+	get: function() {
+	  supportsPassive = true;
+	}
+  });
+  <span style="color:#42b983;">// 如果浏览器支持 passive，会读取对象的 passive 属性，继而调用 get 方法，将 supportsPassive 设置为 true</span>
+  window.addEventListener("test", null, opts);
+} catch (e) {}
+
+<span style="color:#42b983;">// 绑定事件</span>
+elem.addEventListener(
+  'touchstart',
+  fn,
+  supportsPassive ? { passive: true } : false
+); 
+		</pre>
+	</div>
+	<div style="margin-left:50px;">只有使用 <code>addEventListener()</code> 添加的事件，才可以被 <code>removeEventListener()</code> 删除。</div>
+	<div style="margin-left:50px;">注意：<code>removeEventListener()</code> 的参数要与 <code>addEventListener()</code> 的参数相同，</div>
+	<div style="margin-left:85px;">这也意味着通过 <code>addEventListener()</code> 添加的匿名函数无法移除，所以事件处理函数要单独写。</div>
+	<div style="margin-left:50px;">注册多个事件，执行顺序：</div>
+	<pre style="margin-left:75px;">
+var btn1Obj = document.getElementById("btn1");
+btn1Obj.addEventListener("click", method1, false);
+btn1Obj.addEventListener("click", method2, false);
+btn1Obj.addEventListener("click", method3, false);
+<span style="color:green;">// 执行顺序为method1->method2->method3 </span></pre>
+	<div style="margin-left:50px;color:red;font-weight:bold;">addEventListener 与 handleEvent</div>
+	<div style="margin-left:75px;">addEventListener 的第二个参数可以是一个具有 handleEvent 属性的对象：</div>
+	<pre style="margin-left:100px;">
+var obj = {"handleEvent":function(){}};
+btn1Obj.addEventListener("click", obj, false);
+或者：
+var Fun = function(){};
+Fun.prototype.handleEvent = function(){};
+btn1Obj.addEventListener("click", new Fun(), false);</pre>
+	<div style="margin-left:75px;">使用 handleEvent 的优缺点：</div>
+	<div style="margin-left:100px;">① this 指向 obj，而不是 dom，这样可以方便使用 obj 中私有属性</div>
+	<div style="margin-left:100px;">② 动态改变事件处理函数，只要将 obj.handleEvent 指向新的函数，不需要先 remove 再 add</div>
+	<div style="margin-left:100px;">③ obj.handleEvent 作为事件派发中心，看 <span style="color:blue;">swipeview.js</span></div>
+	<div style="margin-left:100px;">④ 只有支持 addEventListener 方法的浏览器，才支持 handleEvent 方式</div>
+	
+	<div style="margin-left:50px;">使用循环给 dom 添加事件，如果使用到外部变量，需要注意：</div>
+	<pre style="margin-left:75px;">
+<span class="string">// 下面程序如果不使用闭包，那么每个处理函数中的 i 都是 4</span>
+for (var i = 0; i < 5; i++) {
+    (function(index){
+        $("#id"+i).on("click",function(){
+            console.log(index);
+        });
+    })(i);
+}</pre>
+	<br>
+	
+	<h5 id="load">onload、DOMContentLoaded、onbeforeunload、onunload、onreadystatechange </h5>
+	<div style="margin-left:25px;"><i>onload</i>：参见 <a href="#__onload">onload</a>。</div>
+	<div style="margin-left:50px;">关于 IE 中 iframe 的 onload 事件：</div>
+	<div style="margin-left:75px;">在低版本 IE 中一定要用 attachEvent 绑定 onload 事件，兼容：</div>
+	<pre style="margin-left:100px;">
+if (iframe.attachEvent){ 
+    iframe.attachEvent("onload", function(){ }); 
+} else { 
+    iframe.onload = function(){ }; 
+}</pre>
+	<div style="margin-left:75px;">有的也采用 iframe 的 onreadystatechange 事件替代 onload。</div>
+	<br>
+	<div style="margin-left:25px;"><i>DOMContentLoaded</i>：事件本身不会等待 CSS 文件、图片、iframe 加载完成。目前已在 HTML5 中被标准化。<br>
+		<pre style="margin-left:25px;">document.addEventListener("DOMContentLoaded", init, false);</pre>
+		<div style="margin-left:25px;">
+			<div><code>DOMContentLoaded</code> 触发时机：加载完页面，解析完所有标签（不包括执行 CSS 和 JS），执行每个静态的 script 标签中的 JS，然后触发。</div>
+			<div style="margin-left:25px;">1、如果页面中没有 &lt;script> 标签，DOMContentLoaded 事件不会等待 CSS、图片加载完成。</div>
+			<div style="margin-left:25px;">2、如果页面中有静态的 &lt;script> 标签，DOMContentLoaded 事件需要等待 JS 执行完才触发。</div>
+			<div style="margin-left:45px;">而 JS 需要等待其前面的 CSS 加载完成才能执行，因为 JS 可能会依赖 CSS 计算出来的样式；JS 不会等待其后面的 CSS 加载完成。</div>
+			<div style="margin-left:45px;color:violet;">静态 &lt;script> 标签：页面中写的 JS 代码、静态引入的 JS。</div>
+			<div style="margin-left:25px;">3、现代浏览器会并发的预加载 CSS、JS，但执行 CSS、JS 的顺序还是按原来的依赖顺序（JS 的执行要等其前面的 CSS 和 JS 加载、执行完）。</div>
+			<div style="margin-left:45px;">先加载完成的资源，如果其依赖还没加载、执行完，就只能等着。</div>
+			<div style="margin-left:25px;">4、img 这个资源是否需要展现出来，需要等所有的 JS 和 CSS 的执行完才知道，因为 JS 可能会执行某些 DOM 操作，</div>
+			<div style="margin-left:45px;">比如删除这个 img 元素，或者修改其 src 属性，而 CSS 可能会将其 display: none 。</div>
+			<div style="margin-left:45px;">页面中没有 JS、CSS，img 的数据一接收到就马上开始解码了。</div>
+			<div style="margin-left:45px;">页面中没有 JS，但有 CSS，img 要等到 CSS 加载完才开始解码。</div>
+			<div style="margin-left:45px;">如果 CSS 把 img 设置为 display: none;，这使得 img 虽然请求了，但根本没有进行解码。</div>
+			<div style="margin-left:45px;">这说明，img 是否需要解码、绘图（paint）出来，确实需要等 CSS 加载、执行完才能知道。也就是说，CSS 会阻塞 img 的展现！</div>
+		</div>
+		<div style="margin-left:25px;">而 <code>onload</code> 要等到所有页面元素加载完成才会触发, 包括页面上的图片等等。</div>
+	</div>
+	<br>
+	<div style="margin-left:25px;"><i>onunload</i>：建议只注册在 body 元素上来监听用户何时离开页面。在现代浏览器上，<code>onunload</code> 事件有时并不是很有效。</div>
+	<br>
+	<div style="margin-left:25px;"><i>onbeforeunload</i>：很多人会用来提示用户正在离开页面，但目前浏览器支持不一。</div>
+	<br>
+	<div style="margin-left:25px;"><i>onreadystatechange</i>：当一个文档的 <code>readyState</code> 属性发生更改时，<code>readystatechange</code> 事件会被触发。</div>
+	<div style="margin-left:50px;">
+		<code>document.readyState</code> 描述了文档的加载状态，有以下值：<br>
+		<i style="margin-left:25px;">loading</i>：加载中，document 仍在加载。<br>
+		<i style="margin-left:25px;">interactive</i>：互动，文档已经完成加载，文档已被解析，但是诸如图像，样式表和框架之类的子资源仍在加载。<br>
+		<i style="margin-left:25px;">complete</i>：完成，文档和所有子资源已完成加载。状态表示 load 事件即将被触发。<br>
+		像 <code>&lt;iframe></code>、<code>&lt;script></code> 都可以绑定 <code>onreadystatechange</code> 事件，但是最好还是使用 <code>onload</code> 事件：<br>
+		<pre>function callBack () {
+  if (<span style="color:#dc4df5;">/loaded|complete/</span>.test(script.readyState)) {
+    script.onreadystatechange = null;
+    script.removeEventListener("readystatechange", callBack);
+    script.detachEvent("onreadystatechange", callBack);
+    <span class="string">// do somthing</span> 
+  }
+}
+script.onreadystatechange = callBack
+script.addEventListener('readystatechange', callBack)
+script.attachEvent('onreadystatechange', callBack)
+<span class="string">// 使用 onload 事件，不用判断状态</span> 
+script.onload = callBack
+script.addEventListener('load', callBack)
+script.attachEvent('onload', callBack) <span class="string">// IE 低版本需要这么注册</span></pre>
+
+<pre><span class="string">// 模拟 DOMContentLoaded 事件</span> 
+document.onreadystatechange = function () {
+    if (document.readyState === "interactive") {
+        initApplication();
+    }
+}</pre>
+	</div>
+	
+	<br>
+	<h5 id="change">onchange、onpropertychange、oninput</h5>
+	<div style="margin-left:25px;"><i>onchange</i>：在属性值改变时，并且当前元素失去焦点（onblur）才可以激活该事件。</div>
+	<div style="margin-left:25px;"><i>onpropertychange</i>: 属性值改变就激活该事件。但是只在IE下有效果（IE11 不支持）。</div>
+	<div style="margin-left:50px;">注意：1、这个元素的任何属性值改变了都会触发该事件，不单纯是 value 值改变。</div>
+	<div style="margin-left:100px;">解决办法：根据属性来判断</div>
+	<div style="margin-left:125px;">1、如果在元素中绑定事件：使用 <code>event.propertyName</code> 来判断是哪个属性值改变了。</div>
+	<div style="margin-left:125px;">2、用jQuery绑定事件：使用 <code>e.originalEvent.propertyName.toLowerCase() == "value"</code> 判断。</div>
+	<div style="margin-left:90px;">2、在IE8下，直接设置 value，也会触发该事件，即使是设置 <code>value = undefined</code></div>
+	<div style="margin-left:100px;">解决办法：通过判断 input 是否有焦点，来判断是输入触发的还是赋值触发的</div>
+	<pre style="margin-left:125px;">
+var $focused = $(':focus'); <span class="string"> // 使用 jQuery 获取有焦点的元素</span>
+var focused = document.activeElement; <span class="string"> // 原生获取有焦点的元素</span>
+var hasFocus = $('foo').is(':focus'); <span class="string"> // 使用 jQuery 判断元素是否有焦点</span>
+elem === elem.ownerDocument.activeElement; <span class="string"> // 原生判断元素是否有焦点</span></pre>
+	<div style="margin-left:25px;"><i>oninput</i>: 属性值改变就激活该事件。IE9+ 支持该事件。</div>
+	<pre style="margin-left:50px;">
+<span class="string">//事件直接写在页面里：</span>
+&lt;input type="text" oninput="alert(this.value);" onpropertychange="alert(this.value);"/>
+
+<span class="string">注册事件：addEventListener、attachEvent</span>
+dom.addEventListener("input",function(){},false);、dom.attachEvent("oninput",function(){});
+
+<span class="string">直接在 dom 上绑定：</span>
+dom.oninput = function(){}
+
+<span class="string">jQuery 注册事件：</span>
+$("#testEvent").on("input",function(){});
+$("#testEvent").on("propertychange",function(e){});</pre>
+	<div style="margin-left:25px;"><span style="color:red;">注意：</span>1、在 IE9 中 onpropertychange、oninput 都有个 BUG，使用键盘 backspace、delete 删除内容时不会触发。</div>
+	<div style="margin-left:90px;">解决办法：监听 keyup 事件，判断 keyCode 是否是 8（backspace）或 46（delete）。</div>
+	<div style="margin-left:65px;">2、onchange、oninput 不能通过 JS 改变值来触发，select 标签也不能用 JS 改变选项来触发 onchange。</div>
+	<br>
+	
+	<h5 id="scroll">onscroll、mousewheel / DOMMouseScroll、onresize / onorientation</h5>
+	<div style="margin-left:25px;"><i>onscroll</i>：元素滚动条滚动时触发该事件，<strong style="color:violet;">事件触发频繁</strong>。</div>
+	<pre style="margin-left:50px;">
+&lt;div onscroll="myFunction()">
+dom.onscroll = function() {myFunction()};
+dom.addEventListener("scroll", myFunction);</pre>
+	<div style="margin-left:25px;"><i>onmousewheel / DOMMouseScroll</i>：鼠标在元素上滑动滚轮触发该事件，<strong style="color:violet;">事件触发不频繁</strong>。</div>
+	<div style="margin-left:50px;"><code>IE、chrome、opera 使用 mousewheel</code></div>
+	<div style="margin-left:50px;"><code>firefox 使用 DOMMouseScroll</code></div>
+	<pre style="margin-left:75px;">
+&lt;div onmousewheel="myFunction()">
+dom.onmousewheel = function() {myFunction()};
+dom.addEventListener("mousewheel", myFunction, false);
+dom.addEventListener("DOMMouseScroll", myFunction, false); <span class="string"> // 或者使用 attachEvent</span></pre>
+	<div style="margin-left:50px;"><code>mousewheel</code> 事件有一个参数 wheelDelta：</div>
+	<div style="margin-left:75px;">如果是正值说明鼠标滚轮向上滚动，负值说明鼠标滚轮向下滚动；</div>
+	<div style="margin-left:75px;">返回值均为 120 的倍数，即：幅度大小 = 返回的值 / 120。</div>
+	<div style="margin-left:50px;"><code>DOMMouseScroll</code> 事件有一个参数 detail：</div>
+	<div style="margin-left:75px;">如果是正值说明鼠标滚轮向下滚动，负值说明鼠标滚轮向上滚动；</div>
+	<div style="margin-left:75px;">返回值均为 3 的倍数，即：幅度大小 = 返回的值 / 3。</div>
+	<div style="margin-left:25px;"><i>onresize / onorientation</i>：元素缩放触发的事件。</div>
+	<div style="margin-left:50px;">当浏览器窗口大小改变的时候，onresize 事件被触发。</div>
+	<div style="margin-left:50px;">mobile 上不能调整大小，但是旋转设备时会触发 onorientation / onresize 事件</div>
+	<br>
+	<h5 id="event">Event 对象</h5>
+	<div style="margin-left:25px;">Event 对象在事件第一次触发的时候被创建出来，并且一直伴随着事件在 DOM 结构中流转的整个生命周期。</div>
+	<div style="margin-left:25px;color:violet;" id="eventP">Event 标准属性</div>
+	<div style="margin-left:50px;"><code>type</code>：事件的名称。</div>
+	<div style="margin-left:50px;"><code>target</code>：事件最初指派到的 DOM 节点。</div>
+	<div style="margin-left:100px;">比如 table 绑定 onclick 事件，但实际单击的是 td，那么 target 指向的就是 td。</div>
+	<div style="margin-left:100px;">target 与 srcElement 是等价，但是 firefox 中没有 srcElement，只有 target。</div>
+	<div style="margin-left:50px;"><code>currentTarget</code>：添加事件侦听的对象本身。</div>
+	<div style="margin-left:100px;">绑定事件的那个元素。</div>
+	<div style="margin-left:50px;"><code>bubbles</code>：返回布尔值，指明这个事件是否是一个冒泡事件。</div>
+	<div style="margin-left:50px;"><code>cancelable</code>：返回布尔值，指明是（true）否（false）可以通过 <code>e.preventDefault()</code> 阻止事件的默认行为。</div>
+	<div style="margin-left:50px;"><code>timestamp</code>：返回毫秒值，指明事件发生的时间。</div>
+	<div style="margin-left:50px;"><code>eventPhase</code> (IE9+)：当前<a href="#phase">事件所处的阶段</a>，值为1、2、3，分别表示捕获阶段、正常事件派发和起泡阶段。</div>
+	<div style="margin-left:50px;"><code>detail</code> (IE9+)：mousedown、mouseup 事件 detail 值为 1；click、dblclick 事件 detail 值为 1、2；其他事件该值为 0。</div>
+	<div style="margin-left:100px;">其实只要不停的单击下去，这个值是累加的。</div>
+	<div style="margin-left:50px;"><code>isTrusted</code>：返回布尔值，表明当前事件是用户行为触发（如鼠标 click 事件），还是脚本生成（如 event.initEvent）。</div>
+	<div style="margin-left:100px;">IE8-、chrome 不支持。</div>
+	<div style="margin-left:50px;"><code>defaultPrevented</code> (IE9+)：返回布尔值，表明当前事件的默认动作是否被取消，即是否调用 event.preventDefault() 方法。</div>
+	<div style="margin-left:25px;color:violet;" id="eventM">Event 标准方法</div>
+	<div style="margin-left:50px;color:#ec28a5;"><strong>createEvent 创建的对象许多方法都被废弃了，比如 initEvent、initMouseEvent，推荐 <a href="#CustomEvent" style="text-decoration: underline;">CustomEvent</a> 创建事件对象。</strong></div>
+	
+	<div style="margin-left:50px;">1、<span style="font-weight:bold;">createEvent( eventType )</span>：创建新的 Event 对象。</div>
+	<div style="margin-left:75px;">虽然都用 document.createEvent() 创建事件，但 createEvent 并不是 Document 接口定义的，而是 DocumentEvent 接口。</div>
+	<div style="margin-left:75px;">如果一个实现支持 Event 模块，那么 Document 对象就会实现 DocumentEvent 接口并支持该方法。</div>
+	<div style="width:700px;margin-left:75px;">
+		<table class="dataintable">
+			<tbody>
+				<tr><th style="width:80px;text-align:center;">参数可选值</th><th style="width:80px;text-align:center;">事件接口</th><th style="width:90px;text-align:center;">初始化方法</th><th style="text-align:center;">注意</th></tr>
+				<tr>
+					<td style="vertical-align:middle;">"HTMLEvents"</td>
+					<td style="vertical-align:middle;">HTMLEvent</td>
+					<td style="vertical-align:middle;">iniEvent()</td>
+					<td>事件类型是 Event；创建的事件可多次触发；<br>
+						如果是自定义事件，只有 <code style="color:violet;">dispatchEvent()</code> 才能触发；<br>
+						如果是标准事件，<code style="color:violet;">dispatchEvent()</code> 和 JS操作都会触发；
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle;">"MouseEvents"</td>
+					<td style="vertical-align:middle;">MouseEvent</td>
+					<td style="vertical-align:middle;">iniMouseEvent()</td>
+					<td>事件类型是 MouseEvent；创建的事件可多次触发；<br>
+						如果是自定义事件，只有 <code style="color:violet;">dispatchEvent()</code> 才能触发；<br>
+						如果是标准鼠标事件，<code style="color:violet;">dispatchEvent()</code> 和鼠标操作都会触发；
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align:middle;">"UIEvents"</td>
+					<td style="vertical-align:middle;">UIEvent</td>
+					<td style="vertical-align:middle;">iniUIEvent()</td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div style="margin-left:75px;margin-top:10px;color:red;">IE8- 不支持该方法，有自己的一套，但是不支持自定义事件：</div>
+	<pre style="margin-left:100px;">
+var btn = document.getElementById("myBtn");
+btn.attachEvent("onclick", function(e) { <span class="string"> // 绑定事件，e 中可以获取设置的属性</span>
+    console.log(e.test); 
+}); 
+var event = document.createEventObject(); <span class="string"> // 创建事件</span>
+event.screenX = 100; <span class="string"> // 添加属性，可以是自定义属性</span>
+event.test = "test"; 
+btn.fireEvent("onclick", event); <span class="string"> // 触发事件</span></pre>
+
+	<div style="margin-left:100px;color:red;">兼容 IE8-：</div>
+	<div style="margin-left:125px;">给元素绑定 onpropertychange 事件，并且添加一个自定义属性，修改该属性就调用指定函数。</div>
+	<pre style="margin-left:125px;">
+&lt;div id="test" evtAlert="test">&lt;/div>
+
+dom.attachEvent("onpropertychange", function(e) {
+    if (e.propertyName == "evtAlert") {
+        fn.call(this);
+    }
+});</pre>
+	<span style="margin-left:100px;">完整兼容代码：</span><br>
+	<div style="margin-left:125px;line-height:1.4;" id="show2" class="hide">
+		<style>
+			.code {width:16px;height:16px;border:1px solid #DDD;position:relative;cursor:pointer;float:left;}
+			.code::before {content:"";width:2px;height:10px;position:absolute;top:8px;margin-top:-5px;left:8px;margin-left:-1px; background:#DDD;}
+			.code::after {content:"";height:2px;width:10px;position:absolute;top:8px;margin-top:-1px;left:8px;margin-left:-5px; background:#DDD;}
+			.hide {height:20px;overflow:hidden;}
+		</style>
+		<script>
+			function show_2(thisObj) {
+				var dom = document.querySelector("#show2");
+				if (dom.className == "hide") {
+					dom.className = "";
+					thisObj.title = "隐藏代码";
+				} else {
+					dom.className = "hide";
+					thisObj.title = "显示代码";
+				}
+			}
+		</script>
+		<div style="height:18px;"><div class="code" onclick="show_2(this);" title="显示代码"></div><div style="float:left;margin-left:5px;font-weight:bold;color:Red;">点击显示代码</div></div>
+		<pre>var $ = function(el) {
+    return new _$(el);    
+};
+var _$ = function(el) {
+this.el = (el && el.nodeType == 1)? el: document;
+};
+_$.prototype = {
+    constructor: this,
+    addEvent: function(type, fn, capture) {
+        var el = this.el;
+        if (document.addEventListener) {
+            <span style="margin-left:75px;color:green;">// 每次都会注册事件，因此多个同名的事件都会被触发</span>
+            el.addEventListener(type, fn, capture);
+            var ev = document.createEvent("HTMLEvents");
+            ev.initEvent(type, capture || false, false);
+            <span style="margin-left:75px;color:green;">// 同名事件在元素上只存储一个，因为会触发所有同名事件</span>
+            if (!el["ev" + type]) {
+                el["ev" + type] = ev;
+            }
+        } else if (document.attachEvent) {
+            el.attachEvent("on" + type, fn);    
+            if (isNaN(el["cu" + type])) {
+                el["cu" + type] = 0; <span style="color:green;"> // 设置自定义属性，修改该属性会触发 onpropertychange 事件</span>
+            }
+            var fnEv = function(event) {
+                if (event.propertyName == "cu" + type) { fn.call(el); }
+            };
+            el.attachEvent("onpropertychange", fnEv);
+            <span style="margin-left:75px;color:green;">// 在元素上存储绑定的事件句柄，方便删除</span>
+            if (!el["ev" + type]) {
+                el["ev" + type] = [fnEv];
+            } else {
+                el["ev" + type].push(fnEv);
+            }
+        }
+        return this;
+    },
+    fireEvent: function(type) {
+        var el = this.el;
+        if (typeof type === "string") {
+            if (document.dispatchEvent) {
+                if (el["ev" + type]) {
+                    el.dispatchEvent(el["ev" + type]);<span style="color:green;"> // 所有同名事件都被触发</span>
+                }
+            } else if (document.attachEvent) {
+                el["cu" + type]++;<span style="color:green;"> // 改变属性值，触发 onpropertychange 事件</span>
+            }
+        }
+        return this;
+    },
+    removeEvent: function(type, fn, capture) {
+        var el = this.el;
+        if (document.removeEventListener) {
+            el.removeEventListener(type, fn, capture || false);
+        } else if (document.attachEvent) {
+            el.detachEvent("on" + type, fn);
+            var arrEv = el["ev" + type];
+            if (arrEv instanceof Array) {
+                <span style="margin-left:100px;color:green;"> // 这里删除了所有同名事件，如果只要删除一个事件呢？</span>
+                for (var i = 0; i &lt; arrEv.length; i++) {
+                    el.detachEvent("onpropertychange", arrEv[i]);
+                }
+            }
+        }
+        return this;    
+    }
+};
+		
+<span style="color:green;">--------------使用--------------</span>
+var fnClick = function(e) {
+    e = e || window.event;
+    var target = e.target || e.srcElement;
+    if (target.nodeType === 1) {
+        alert("点击类型：" +  e.type);
+        $(target).fireEvent("alert"); <span style="color:green;">// 触发 alert 事件</span>
+    }
+}, 
+funAlert1 = function() {
+    alert("自定义alert事件弹出！");    
+}, 
+funAlert2 = function() {
+    alert("自定义alert事件再次弹出！");    
+};
+var elImage = document.getElementById("image");
+$(elImage)
+    .addEvent("click", fnClick)
+    .addEvent("alert", funAlert1)
+    .addEvent("alert", funAlert2);
+<span style="color:green;">// 删除自定义事件按钮</span>
+var elButton = document.getElementById("button");
+$(elButton).addEvent("click", function() {
+    $(elImage)
+        .removeEvent("alert", funAlert1)
+        .removeEvent("alert", funAlert2);    
+    alert("清除成功！");
+});</pre>
+	</div>
+	<div style="margin-left:75px;margin-top:10px;color:red;">Event : <span style="color:#333;">Event 也用来创建事件。IE 不支持该方法。</span></div>
+	<pre style="margin-left:100px;">
+var btn = document.getElementById("myBtn");
+btn.addEventListener("testEvent", function(e) {
+    console.log(e);
+}, false);
+var ev = new Event('testEvent');
+ev.test = "test"; <span class="string"> // 添加自定义属性</span>
+btn.dispatchEvent(ev);</pre>
+	
+	<div style="margin-left:50px;margin-top:10px;">2、<span style="font-weight:bold;">initEvent( eventType, canBubble, cancelable )</span>：初始化事件，指定事件类型。</div>
+	<div style="margin-left:75px;">参数：</div>
+	<div style="margin-left:100px;"><code>eventType</code>：字符串值。事件的类型。</div>
+	<div style="margin-left:100px;"><code>canBubble</code>：事件是否向外层 DOM 冒泡。</div>
+	<div style="margin-left:150px;">true：冒泡到外层 DOM，触发外层 DOM 绑定的同类型事件；</div>
+	<div style="margin-left:150px;">false：不会冒泡到外层 DOM，即在冒泡阶不会触发外层 DOM 同类型的事件；</div>
+	<div style="margin-left:100px;"><code>cancelable</code>：是否可以用 preventDefault() 方法取消事件默认行为。</div>
+	<div style="margin-left:150px;">true：在事件回调中可以通过 e.preventDefault() 取消事件默认行为；</div>
+	<div style="margin-left:150px;">false：在事件回调中不可以取消事件默认行为；</div>
+	<div style="margin-left:75px;">示例：</div>
+	<pre style="margin-left:100px;">
+var dom = document.getElementById("testV");
+var evt = <span style="color:violet;">document.createEvent( "HTMLEvents" );</span> <span class="string"> // 创建一个 Event</span>
+<span style="color:violet;">evt.initEvent( "cl", false, false );</span> <span class="string"> // 初始化 Event</span>
+evt.test = "11111";<span class="string"> // 给事件对象添加自定义属性，事件冒泡时 event 中可以获取这个变量</span>
+dom.addEventListener("cl", function(e) { <span class="string"> // 先给元素绑定事件</span>
+    console.log(e.test);
+}, false);
+dom.<span style="color:violet;">dispatchEvent</span>( evt );<span style="color:green;"> // 触发一次</span>
+dom.<span style="color:violet;">dispatchEvent</span>( evt );<span style="color:green;"> // 再触发一次</span></pre>
+	
+	<div style="margin-left:50px;">3、<span style="font-weight:bold;">preventDefault()</span>：阻止事件的默认行为。</div>
+	
+	<div style="margin-left:50px;">4、<span style="font-weight:bold;">stopPropagation()</span>：阻止事件冒泡。</div>
+	<div style="margin-left:75px;">IE8 没有 <code>preventDefault()</code>，使用 <code>e.returnValue = false</code> 代替。</div>
+	<div style="margin-left:75px;">IE8 没有 <code>stopPropagation()</code>，使用 <code>e.cancelBubble = true</code> 代替。</div>
+	<div style="margin-left:75px;">如果使用 Jquery 绑定事件：</div>
+	<div style="margin-left:100px;">在回调函数中使用 <code>return false</code> 可以阻止默认行为和冒泡；</div>
+	<div style="margin-left:100px;">在回调函数中使用 <code>e.preventDefault()</code> 可以阻止默认行为；</div>
+	<div style="margin-left:100px;">在回调函数中使用 <code>e.stopPropagation()</code> 可以阻止冒泡；</div>
+	<div style="margin-left:75px;color:violet;"><code style="color:violet;">stopPropagation()</code> 注意点；</div>
+	<div style="margin-left:100px;">因为其他绑定事件方法都没有指明触发阶段，所以都可以使用 e.stopPropagation() 阻止冒泡；</div>
+	<div style="margin-left:100px;">但是 <a href="#eve">addEventListener</a> 指明了触发阶段，stopPropagation() 只能阻止冒泡阶段的事件。</div>
+	<div style="margin-left:100px;">比如：</div>
+	<div style="margin-left:125px;"><code>&lt;div id="div1">&lt;div id="div2">&lt;/div>&lt;/div></code></div>
+	<div style="margin-left:125px;">div1 在捕获阶段，div2 在冒泡阶段，div2 不能阻止 div1，并且 div1 上的事件要比 div2 早触发。</div>
+	<div style="margin-left:75px;">JS 兼容：</div>
+	<div style="margin-left:100px;" id="show1" class="hide">
+		<style>
+			.code {width:16px;height:16px;border:1px solid #DDD;position:relative;cursor:pointer;float:left;}
+			.code::before {content:"";width:2px;height:10px;position:absolute;top:8px;margin-top:-5px;left:8px;margin-left:-1px; background:#DDD;}
+			.code::after {content:"";height:2px;width:10px;position:absolute;top:8px;margin-top:-1px;left:8px;margin-left:-5px; background:#DDD;}
+			.hide {height:20px;overflow:hidden;}
+		</style>
+		<script>
+			function show_1(thisObj) {
+				var dom = thisObj.parentNode.parentNode;
+				if (dom.className == "hide") {
+					dom.className = "";
+					thisObj.title = "隐藏代码";
+				} else {
+					dom.className = "hide";
+					thisObj.title = "显示代码";
+				}
+			}
+		</script>
+		<div style="height:18px;"><div class="code" onclick="show_1(this);" title="显示代码"></div><div style="float:left;margin-left:5px;font-weight:bold;color:Red;">点击显示代码</div></div>
+		<pre>(function() {
+    function ol(e){
+        e = e || window.event;
+        if (!e.stopEvent) {
+            <span style="margin-left:75px;color:green;">// 获得原型</span><br>
+            if (Object && Object.getPrototypeOf){
+                e = Object.getPrototypeOf(e);
+            } else{
+                e = this[e.constructor.toString().match(/(function|object)\s+([A-Z][^\s(\]]+)/)[2]].prototype;
+            }
+            e.stopEvent = function(bubble) {
+                bubble = bubble || false;
+                if (this.preventDefault) {
+                    this.preventDefault();
+                    if (!bubble) {
+                        this.stopPropagation();
+                    }
+                }
+                this.returnValue = false;
+                this.cancelBubble = !bubble;
+                return this;
+            };
+        }
+        if (this.addEventListener) {
+            this.removeEventListener('load',ol,false);
+            return;
+        }
+        this.detachEvent('onload',ol);
+    }
+    if (this.addEventListener) {
+        this.addEventListener('load',ol,false);
+    } else {
+        this.attachEvent('onload',ol);
+    }
+})();
+
+<span style="color:green;">// 第二种，但 IE7-、IE8非标准模式中会报错: Event 不存在，所以最好用 event 实例对象阻止。</span><br>
+if(!(Event.prototype.stopEvent)) {
+    Event.prototype.stopEvent = function(propagate) {
+        propagate = (propagate ? true : false);
+        if (this.preventDefault) {
+            this.preventDefault();
+            if (!propagate) {
+                this.stopPropagation();
+            }
+        }
+        this.returnValue = false;
+        this.cancelBubble = !propagate;
+        return this;
+    };
+}</pre>
+	</div>
+	<div style="margin-left:50px;">5、<span style="font-weight:bold;">stopImmediatePropagation</span> (IE9+)</div>
+	<div style="margin-left:75px;">
+		<code>addEventListener</code> 注册的事件执行顺序是先注册的先执行，所以 <code>stopImmediatePropagation</code> 只能停止后面注册的同类型事件。<br>
+		<div style="display:inline-block;border:1px solid red;margin-top:10px;cursor:pointer;" id="testStopImmediatePropagation">绑定 3 个 click 事件，第二个使用 stopImmediatePropagation</div>
+		<div id="stopImmediatePropagation"></div>
+		<script>
+			(function(){
+				var dom = document.querySelector('#testStopImmediatePropagation')
+				dom.addEventListener('click', function(e){
+					document.querySelector('#stopImmediatePropagation').innerHTML = '---------第一个注册的 click 事件---------<br>'
+				}, false)
+				
+				dom.addEventListener('click', function(e){
+					document.querySelector('#stopImmediatePropagation').innerHTML += '---------第二个注册的 click 事件---------<br>'
+					e.stopImmediatePropagation()
+				})
+				
+				dom.addEventListener('click', function(e){
+					document.querySelector('#stopImmediatePropagation').innerHTML += '---------第三个注册的 click 事件---------<br>'
+				})
+			})()
+		</script>
+		<div style="margin-top:10px;">
+			<code>stopImmediatePropagation</code> 也会阻止事件冒泡。<br>
+		</div>
+		<div style="display:inline-block;border:1px solid red;margin-top:10px;cursor:pointer;padding:10px 50px 30px 10px;" id="parent">parent
+			<div style="width:50px;height:50px;border:1px solid blue;" id="child">child</div>
+		</div>
+		<div id="stopImmediatePropagation1"></div>
+		<script>
+			(function(){
+				var child = document.querySelector('#child')
+				var parent = document.querySelector('#parent')
+				child.addEventListener('click', function(e){
+					document.querySelector('#stopImmediatePropagation1').innerHTML = '---------child click 事件---------<br>'
+					e.stopImmediatePropagation()
+				}, false)
+				
+				parent.addEventListener('click', function(e){
+					document.querySelector('#stopImmediatePropagation1').innerHTML = '---------parent click 事件---------<br>'
+				}, false)
+			})()
+		</script>
+	</div>
+	<br>
+	<div style="margin-left:50px;margin-top:10px;" id="CustomEvent"><strong>CustomEvent</strong>: <span style="color:#333;">创建一个自定义事件，继承自 Event。IE 不支持该方法。</span></div>
+	<div style="margin-left:75px;">
+		<pre>var event = new CustomEvent( typeArg, customEventInit );</pre>
+		<p><code>typeArg</code>：事件名称。</p>
+		<p><code>customEventInit</code>：一个对象，有如下属性：</p>
+		<p style="margin-left:25px;"><code>detail</code>：默认值 null。存放任意类型数据，在事件回调中通过 event.detail 获取数据。</p>
+		<p style="margin-left:85px;">在事件回调中，不能将 detail 重新赋值新的数据，但是可以修改 detail 指向的对象。参见下面示例代码。</p>
+		<p style="margin-left:25px;"><code>bubbles</code>：一个布尔值，设置当前事件是否会向 DOM 树上层元素冒泡。</p>
+		<p style="margin-left:85px;">true: 事件会向外层元素冒泡，触发外层元素上的相同事件；</p>
+		<p style="margin-left:85px;">false: 事件不会冒泡，事件在冒泡阶段到此结束；</p>
+		<p style="margin-left:25px;"><code>cancelable</code>：一个布尔值，设置是否可以取消该事件的默认行为。</p>
+		<p style="margin-left:85px;">true: 在事件回调中可以通过 e.preventDefault() 取消事件默认行为；</p>
+		<p style="margin-left:85px;">false: 在事件回调中不可以取消事件默认行为；</p>
+		<div>
+			<p style="color:red;">CustomEvent 创建的事件无法触发默认行为：</p>
+			<pre style="margin-left:25px;">var a = document.createElement('a')
+a.href = 'http://www.baidu.com'
+var ev = new CustomEvent('click', { bubbles: true })
+a.addEventListener('click', function(e) {
+    console.log(e) <span class="string">// 可以触发 click 事件，但是不能触发 a 标签默认行为</span>
+})
+a.dispatchEvent(ev)</pre>
+		</div>
+		<p>示例：</p>
+		<pre style="">
+&lt;div id="parent">
+    &lt;div id="child">&lt;/div>
+&lt;/div>
+
+var parent = document.getElementById("parent");
+var child = document.getElementById("child");
+<span class="string">// 父元素绑定自定义事件</span>
+parent.addEventListener("testEvent", function(e) {
+    console.log(e.detail); <span class="string">// { name: 'whws', age: 11 }</span>
+}, false);
+
+<span class="string">// 子元素绑定自定义事件</span>
+child.addEventListener("testEvent", function(e) {
+    console.log(e.detail); <span class="string">// { name: 'whws' }，下面增加的 age 属性对这里没有影响，说明 e.detail 应该不是以对象存储的</span>
+    e.detail.age = 11; <span class="string">// 修改 detail 指向的对象</span>
+    <span class="string">// e.detail = {age: 11}; <span style="color:red;">// 报错，不能修改 detail 的指向</span>
+}, false);
+<span class="string">// 创建自定义事件</span>
+<span style="color:violet;">var ev = new CustomEvent('testEvent',{ </span> <span class="string"> // 自定义事件名称 testEvent</span>
+<span style="color:violet;">    detail: { name: 'whws' },</span> <span class="string"> // 设置数据</span>
+<span style="color:violet;">    bubbles: true,</span> <span class="string"> // 设置事件可以冒泡到外层 DOM 树，所以 parent 元素会触发事件；false 的话 parent 就不会触发</span>
+<span style="color:violet;">    </span> <span class="string"> // </span>
+<span style="color:violet;">});</span>
+ev.detail = "test"; <span class="string"> // 不能覆盖原数据，所以该行代码无效</span>
+ev.test = "test"; <span class="string"> // 添加自定义属性</span>
+btn.dispatchEvent(ev);</pre>
+		<p>CustomEvent 实例属性：</p>
+		<div style="margin-left:25px;">
+			<p><code>detail</code>：[只读]，创建 CustomEvent 对象时设置的数据。</p>
+			<p><code>bubbles</code>：[只读]，一个布尔值，表明当前事件是否会向 DOM 树上层元素冒泡。</p>
+			<p><code>cancelBubble</code>：stopPropagation() 的一个曾用名。设置为 true 可阻止事件冒泡。</p>
+			<p><code>cancelable</code>：[只读]，一个布尔值，指示是否可取消事件默认行为。</p>
+			<p><code>composed</code>：[只读]，返回一个布尔值，指示该事件是否可以从 <a style="color:#057cab;">Shadow DOM</a> 传递到一般的 DOM。</p>
+			<div style="margin-left:25px;">
+				<p>true：表明当事件到达 shadow DOM 的根节点时，事件可以从 shadow DOM 传递到一般 DOM。</p>
+				<p style="margin-left:40px;">当然，事件要具有可传播性，即该事件的 bubbles 属性必须为 true。你也可以通过调用 composedPath() 来查看事件从 shadow DOM 传播到普通 DOM 的路径。</p>
+				<p>false：事件将不会跨越 shadow DOM 的边界传播。</p>
+			</div>
+			<p><code>currentTarget</code>：[只读]，绑定事件的元素。</p>
+			<p><code>target</code>：[只读]，触发事件起点元素。</p>
+			<p><code>srcElement</code>：兼容 IE 低版本，与 target 一样。</p>
+			<p><code>returnValue</code>：兼容 IE 低版本，表示该事件的默认操作是否已被阻止。</p>
+			<div style="margin-left:25px;">
+				<p>true[默认]：允许事件默认行为。</p>
+				<p>false：防止事件默认行为。</p>
+			</div>
+			<p><code>defaultPrevented</code>：[只读]，返回一个布尔值，表明当前事件的默认动作是否被取消，也就是是否执行了 event.preventDefault() 方法。</p>
+			<p><code>type</code>：[只读]，事件名称。</p>
+			<p><code>timeStamp</code>：[只读]，返回事件发生时的时间戳。</p>
+			<p><code>isTrusted</code>：[只读]，返回一个布尔值，为 true 表明当前事件是由用户行为触发(比如说真实的鼠标点击触发一个click事件), false 表明事件由一个脚本生成的(使用事件构造方法,比如event.initEvent)。</p>
+			<p><code>eventPhase</code>：返回一个代表当前执行阶段的 整数值。</p>
+			<div style="padding:0 25px;">
+				<table class="dataintable">
+				 <thead>
+				  <tr>
+				   <th scope="col">常量</th>
+				   <th scope="col">值</th>
+				   <th scope="col">描述</th>
+				  </tr>
+				 </thead>
+				 <tbody>
+				  <tr>
+				   <td><code>Event.NONE</code></td>
+				   <td>0</td>
+				   <td>这个时间，没有事件正在被处理</td>
+				  </tr>
+				  <tr>
+				   <td><code>Event.CAPTURING_PHASE</code></td>
+				   <td>1</td>
+				   <td>事件正在被目标元素的祖先对象处理. 这个处理过程从<a href="/zh-CN/docs/Web/API/Window" title="The window object represents a window containing a DOM document; the document property points to the DOM document loaded in that window."><code>Window</code></a>开始，然后<a href="/zh-CN/docs/Web/API/Document" title="Document 接口提供了一些在浏览器服务中作为页面内容入口点而加载的一些页面，也就是 DOM 树。 DOM 树包括诸如 <body> 和 <table> 之类的元素，及其他元素。其也为文档（document）提供了全局性的函数，例如获取页面的 URL、在文档中创建新的 element&nbsp;的函数。"><code>Document</code></a>, 然后是<a href="/zh-CN/docs/Web/API/HTMLHtmlElement" title="HTMLHtmlElement&nbsp;接口是给定HTML文档的根节点。它继承了 HTMLElement 对象的属性和方法"><code>HTMLHtmlElement</code></a>, 一直这样，直到目标元素的父元素。 通过<a href="/zh-CN/docs/Web/API/EventTarget/addEventListener" title="EventTarget.addEventListener()&nbsp;方法将指定的监听器注册到 EventTarget&nbsp;上，当该对象触发指定的事件时，指定的回调函数就会被执行。 事件目标可以是一个文档上的元素&nbsp;Document&nbsp;本身，或者任何其他支持事件的对象 (比如&nbsp;XMLHttpRequest)。"><code>EventTarget.addEventListener()</code></a> 注册为捕获模式的<a href="/zh-CN/docs/Web/API/EventListener" title="当EventListener 所注册的事件发生的时候，该方法会被调用。">Event listeners</a> 被调用。</td>
+				  </tr>
+				  <tr>
+				   <td><code>Event.AT_TARGET</code></td>
+				   <td>2</td>
+				   <td>事件对象已经抵达<a href="/zh-CN/docs/Web/API/EventTarget" title="EventTarget 是一个由可以接收事件的对象实现的接口，并且可以为它们创建侦听器。">the event's target</a>. 为这个阶段注册的事件监听被调用。 如果 <a href="/zh-CN/docs/Web/API/Event/bubbles" title="返回一个布尔值,表明当前事件是否会向DOM树上层元素冒泡."><code>Event.bubbles</code></a> 的值为false, 对事件对象的处理在这个阶段后就会结束.</td>
+				  </tr>
+				  <tr>
+				   <td><code>Event.BUBBLING_PHASE</code></td>
+				   <td>3</td>
+				   <td>事件对象逆向向上传播回目标元素的祖先元素, 从父亲元素开始，并且最终到达包含元素 <a href="/zh-CN/docs/Web/API/Window" title="The window object represents a window containing a DOM document; the document property points to the DOM document loaded in that window."><code>Window</code></a>. 这就是冒泡，并且只有<a href="/zh-CN/docs/Web/API/Event/bubbles" title="返回一个布尔值,表明当前事件是否会向DOM树上层元素冒泡."><code>Event.bubbles</code></a> 值为true的时候才会发生。&nbsp;为这个阶段注册的<a href="/zh-CN/docs/Web/API/EventListener" title="当EventListener 所注册的事件发生的时候，该方法会被调用。">Event listeners</a> 在这个过程中被触发.</td>
+				  </tr>
+				 </tbody>
+				</table>
+			</div>
+		</div>
+		<br>
+		<p>Polyfill</p>
+		<pre style="margin-left:25px;">(function() {
+    try {
+        // a : While a window.CustomEvent object exists, it cannot be called as a constructor.
+        // b : There is no window.CustomEvent object
+        new window.CustomEvent('T');
+    } catch ( e ) {
+        var CustomEvent = function ( event, params ) {
+            params = params || { bubbles: false, cancelable: false, detail: undefined };
+			
+            var evt = document.<span class="keyword">createEvent</span>('<span class="string">CustomEvent</span>');
+            evt.<span class="keyword">initCustomEvent</span>(event, params.bubbles, params.cancelable, params.detail);
+            return evt;
+        };
+        CustomEvent.prototype = window.Event.prototype;
+        window.CustomEvent = CustomEvent;
+    }
+})();
+
+CustomEvent.initCustomEvent() 方法初始化了一个 CustomEvent object。
+如果该事件已经被分发出去，则不会在初始化过程中重复触发。
+
+这类对象一定是由 Document.createEvent() 方法创建的。
+该方法被分发之前必须通过 EventTarget.dispatchEvent() 方法设置。一旦被分发则，则无法被重新设置。</pre>
+	</div>
+	
+	<br>
+	<div style="margin-left:25px;color:violet;" id="eventO">获取 event 对象</div>
+	<div style="margin-left:50px;">1、在标签上添加事件，通过参数获取 event</div>
+	<code style="margin-left:100px;">&lt;div id="dialog" onclick="clk(event);">&lt;/div></code><br>
+	<code style="margin-left:100px;">function clk(e) {</code><br>
+	<code style="margin-left:125px;">var e = e || window.event;</code><br>
+	<code style="margin-left:100px;">}</code><br>
+	<div style="margin-left:75px;"><span style="color:violet;">为什么必须使用 event ? </span><span>先看看 onclick 函数自身是什么：</span></div>
+	<code style="margin-left:100px;">&lt;div id="dialog" onclick="console.log(arguments.callee);">&lt;/div></code><br>
+	<div style="margin-left:125px;">IE6/7/8 打印: <code>function onclick(){ console.log(arguments.callee);}</code></div>
+	<div style="margin-left:125px;">IE9+/Opera/Safari/Chrome 打印: <code>function onclick(event){ console.log(arguments.callee);}</code></div>
+	<div style="margin-left:100px;">发现 onclick 函数默认参数的名字就叫做 event，所以必须使用 event 变量。</div>
+	<div style="margin-left:75px;color:violet;">再看下为什么要这么写 <code style="color:violet;">var e = e || window.event：</code></div>
+	<div style="margin-left:100px;">IE/Opera/Safari/Chrome 可以在 function 中使用 <code>window.event</code> 获取事件对象；</div>
+	<div style="margin-left:100px;">Firefox 没有 <code>window.event</code>，必须传参；</div>
+	<div style="margin-left:100px;">IE8- 没有参数，必须用 <code>window.event</code>；</div>
+	<div style="margin-left:50px;">2、<code>document.getElementById('dialog').onclick = function(e) {};</code></div>
+	<div style="margin-left:100px;">IE8- 没有参数，必须用 <code>window.event;</code></div>
+	<div style="margin-left:100px;">Firefox 没有 <code>window.event</code>，必须传参；</div>
+	<div style="margin-left:100px;">IE9+/Opera/Safari/Chrome 两种方式都支持。</div>
+	<div style="margin-left:50px;">3、使用 <code>addEventListener</code> 或 IE 专有的 <code>attachEvent</code> </div>
+	<code style="margin-left:100px;">var dom = document.getElementById('dialog');</code><br>
+	<code style="margin-left:100px;">if (dom.addEventListener) {</code><br>
+	<code style="margin-left:125px;">dom.addEventListener('click',clk,false); </code><br>
+	<code style="margin-left:100px;">} else {</code><br>
+	<code style="margin-left:125px;">dom.attachEvent('onclick',clk); </code><br>
+	<code style="margin-left:100px;">}</code><br>
+	<code style="margin-left:100px;">function clk(e) { <span style="color:green;"> // code </span> }</code><br>
+	<div style="margin-left:75px;">这种传参的方式所有浏览器都能得到 event；</div>
+	<div style="margin-left:75px;">如果在 clk 函数中使用 window.event，只有 Firefox 不支持；</div>
+	<div style="margin-left:50px;">4、jQuery 绑定事件 </div>
+	<code style="margin-left:100px;">$("#child").on("click",function(e){});</code><br>
+	<div style="margin-left:75px;">这种传参的方式所有浏览器都能得到 event；</div>
+	<h5 id="phase">事件阶段 </h5>
+	<div style="margin-left:25px;">W3C 规范中定义了 3 个事件阶段：捕获阶段（Capture Phase）、目标阶段（Target Phase）、冒泡阶段（Bubbling Phase）。</div>
+	<div style="margin-left:25px;">捕获阶段：</div>
+	<div style="margin-left:50px;">在事件对象到达事件目标之前，事件对象必须从 window 经过目标的祖先节点传播到事件目标。</div>
+	<div style="margin-left:50px;">如果事件监听器注册在这个阶段，在事件到达其目标前必须先处理事件。</div>
+	<div style="margin-left:50px;">比如使用 addEventListener 注册事件，第三个参数设置为 true，表示在捕获阶段调用事件处理程序。</div>
+	<div style="margin-left:25px;">目标阶段：</div>
+	<div style="margin-left:50px;">事件对象到达其事件目标。一旦事件对象到达事件目标，该阶段的事件监听器就要对它进行处理。</div>
+	<div style="margin-left:50px;">如果一个事件对象类型被标志为不能冒泡，那么对应的事件对象在到达此阶段时就会终止传播。</div>
+	<div style="margin-left:25px;">冒泡阶段：</div>
+	<div style="margin-left:50px;">事件对象从事件目标开始，经过其祖先节点传播到 window。这个方向与捕获阶段相反。</div>
+	<div style="margin-left:50px;">在此阶段注册的事件监听器会对相应的冒泡事件进行处理。</div>
+	<div style="margin-left:50px;">比如使用 addEventListener 注册事件，第三个参数设置为 false，表示在冒泡阶段调用事件处理程序。</div>
+	<div style="margin-left:25px;">事件阶段图解：</div>
+	<div style="margin-left:50px;">
+		<canvas id="cv" width="400" height="250" style="width:400px;height:250px;border:1px solid #ddd;"></canvas>
+	</div>
+	<div style="margin-left:25px;">事件对象按照上图的传播路径依次完成这些阶段。</div>
+	<div style="margin-left:25px;">如果某个阶段不支持或事件对象的传播被终止，那么该阶段就会被跳过。</div>
+	<div style="margin-left:50px;">比如 Event.bubbles 属性被设置为 false，那么冒泡阶段就会被跳过。</div>
+	<div style="margin-left:50px;">比如 Event.stopPropagation() 在事件派发前被调用，那么所有的阶段都会被跳过。</div>
+	<div style="margin-left:25px;">一个事件完成了所有阶段的传播路径后，它的 Event.currentTarget 会被设置为 null，并且 Event.eventPhase 会被设为 0。</div>
+	<div style="margin-left:25px;">Event 的所有其他属性都不会改变（包括指向事件目标的 Event.target 属性）。</div>
+	<script>
+		var canvas = document.querySelector('#cv');
+		var ctx = canvas.getContext('2d');
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "#333";
+		ctx.strokeRect(170.5, 10.5, 60, 20);
+		ctx.font = "Bold 12px Arial";
+		ctx.textAlign = "center";
+		ctx.fillText("Window", 200, 25);
+		ctx.strokeRect(170.5, 40.5, 60, 20);
+		ctx.fillText("Document", 200, 55);
+		ctx.strokeRect(170.5, 70.5, 60, 20);
+		ctx.fillText("<html>", 200, 85);
+		ctx.strokeRect(170.5, 100.5, 60, 20);
+		ctx.fillText("<body>", 200, 115);
+		ctx.strokeRect(170.5, 130.5, 60, 20);
+		ctx.fillText("<table>", 200, 145);
+		ctx.strokeRect(170.5, 160.5, 60, 20);
+		ctx.fillText("<tr>", 200, 175);
+		ctx.save();
+		ctx.fillStyle = "violet";
+		ctx.fillRect(170.5, 190.5, 60, 20);
+		ctx.restore();
+		ctx.fillText("<td>", 200, 205);
+		draw1(165.5,15.5, "red");
+		draw1(165.5,48.5, "red");
+		draw1(165.5,80.5, "red");
+		draw1(165.5,113.5, "red");
+		draw1(165.5,145.5, "red");
+		draw1(165.5,175.5, "red");
+		ctx.fillStyle = "red";
+		ctx.fillText("Capture Phase", 100, 105);
+		ctx.fillText("( 1 )", 100, 120);
+		ctx.fillStyle = "violet";
+		ctx.fillText("Target Phase", 200, 225);
+		ctx.fillText("( 2 )", 200, 240);
+		draw2(235,200,"green");
+		draw2(235,170,"green");
+		draw2(235,140,"green");
+		draw2(235,110,"green");
+		draw2(235,80,"green");
+		draw2(235,50,"green");
+		ctx.fillStyle = "green";
+		ctx.fillText("Bubbling Phase", 300, 105);
+		ctx.fillText("( 3 )", 300, 120);
+		function draw1(x, y, color) {
+			ctx.save();
+				ctx.strokeStyle = color;
+				ctx.beginPath();
+				ctx.moveTo(x,y);
+				ctx.quadraticCurveTo(x-30,y,x,y+30);
+				ctx.stroke();
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.moveTo(x,y+30);
+				ctx.lineTo(x-3,y+25);
+				ctx.lineTo(x-5,y+28);
+				ctx.closePath();
+				ctx.fill();
+			ctx.restore();
+		}
+		function draw2(x, y, color) {
+			ctx.save();
+				ctx.strokeStyle = color;
+				ctx.beginPath();
+				ctx.moveTo(x,y);
+				ctx.quadraticCurveTo(x+30,y,x,y-28);
+				ctx.stroke();
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.moveTo(x,y-28);
+				ctx.lineTo(x+2,y-23);
+				ctx.lineTo(x+5,y-26);
+				ctx.closePath();
+				ctx.fill();
+			ctx.restore();
+		}
+	</script>
+	<h5 id="target">srcElement、currentTarget、target </h5>
+	<div style="margin-left:25px;">srcElement：事件最初指派到的元素。</div>
+	<div style="margin-left:50px;">比如 table 绑定 onclick 事件，但实际单击的是 td，那么 srcElement 指向的就是 td。</div>
+	<div style="margin-left:50px;color:violet;">注意：在 firefox 中，没有 srcElement，有等价的 target。</div>
+	<div style="margin-left:25px;">currentTarget：添加事件侦听的对象本身。</div>
+	<div style="margin-left:25px;">target：事件最初指派到的元素。示例参见 srcElement。</div>
+	<br>
+	<h5 id="moveDom">操作 dom 对事件影响</h5>
+	<div style="margin-left:25px;">1、在元素标签上添加的事件</div>
+	<pre style="margin-left:50px;">
+&lt;div id="t_div">
+    &lt;span id="t_span" onclick="console.log(1111);">click&lt;/span>
+&lt;/div>
+<span class="string">// 以下两种操作，都不影响事件：</span>
+1、testDom.innerHTML = t_div_dom.innerHTML;
+2、testDom.appendChild(t_span_dom);</pre>
+	<div style="margin-left:25px;">2、使用 js 添加事件</div>
+	<pre style="margin-left:50px;">
+&lt;div id="t_div">
+    &lt;span id="t_span">click&lt;/span>
+&lt;/div>
+&lt;div id="t_div2">&lt;/div>
+t_span_dom.addEventListener("click",function(){
+    <span class="string">// code</span>
+});
+$("#t_span").on("click",function(){
+    <span class="string">// code</span>
+});
+<span class="string">// 直接操作 dom，不会影响事件：</span>
+1、t_div2_dom.appendChild(t_span_dom);
+2、$("#t_div2").append(t_span_dom);
+<span class="string">// 如果将绑定事件的 dom 变成 html，事件就会丢失。</span></pre><br>
+	<h5 id="mobileEvent">手机事件</h5>
+	<div style="margin-left:25px;">1、touch 事件</div>
+	<div style="margin-left:50px;">
+		touch 事件可以分为“单点触摸”和“多点触摸”两种，单点触摸高端机一般都支持，<br>
+		Safari2.0、Android3.0以上的版本支持多点触摸，支持最多 5 个手指同时触摸屏幕，ipad 最多支持 11 个手指同时触摸屏幕，<br>
+		我们可以采用以下的事件模型捕获这些事件：<br>
+		<p style="margin-left:25px;"><code>(on)touchstart</code>：当用户在屏幕上按下手指，(on)touchstart 会被触发；</p>
+		<p style="margin-left:25px;"><code>(on)touchmove</code>：当用户移动一个或多个手指，(on)touchmove 会被触发；<br>
+	        <span style="margin-left:50px;">先放一个手指，再放另一个手指也会执行(on)touchmove事件；</span><br>
+	        <span style="margin-left:50px;">放两个手指，移开一个手指也会执行该事件；</span>
+		</p>
+		<p style="margin-left:25px;"><code>(on)touchend</code>：用户移走手指，(on)touchend 被触发
+		<p style="margin-left:25px;"><code>(on)touchcancel</code>：当一些更高级别的事件发生的时候，会触发(on)touchcancel。<br>
+			<span style="margin-left:50px;">例如 alert、有电话打来或者有推送的消息提示的时候会取消当前的 touch 操作。</span><Br>
+		    <span style="margin-left:50px;">当你在开发一个 web game 的时候，(on)touchcancel 对你很重要，你可以在 (on)touchcancel 触发的时候暂停游戏或者保存游戏。</span>
+		</p>
+		<br>
+		Android 4.0.x 手机浏览器上有个 BUG，触发 touchmove 事件之后，不会触发 touchend 事件，而且 touchmove 没有触发多次。<br>
+		修复 bug：只要在 touchstart 的时候调用下 event.preventDefault()，即可让其他事件都正常被触发，但是页面滚动会有问题!
+	</div>
+	<br>
+	<div style="margin-left:25px;">2、gesture 手势事件</div>
+	<div style="margin-left:50px;">
+		gesture 事件的运行原理与 touch 事件相同，只是 gesture 事件仅当屏幕上存在至少两个手指时触发，所以 Safari2.0、Android3.0 以上版本支持，<br>
+		手势具备诸多优势，可以帮助我们测量两指放缩和旋转操作。<br>
+		手势事件的事件对象会比普通触摸事件多两个属性：rotation 手指的旋转角度、 scale 放缩的值。<br>
+		<p style="margin-left:25px;"><code>(on)gesturestart</code>：当一个手指已经按在屏幕上，而另一个手指又触摸在屏幕时触发。</p>
+		<p style="margin-left:25px;"><code>(on)gesturechange</code>：当触摸屏幕的任何一个手指的位置发生变化时触发。</p>
+		<p style="margin-left:25px;"><code>(on)gestureend</code>：当任何一个手指从屏幕上面移开时触发。</p>
+	</div>
+	<br>
+	<div style="margin-left:25px;">3、touch 事件与 gesture 手势事件关系</div>
+	<ol style="margin-left:70px;">
+		<li>当一个手指放在屏幕上时，会触发 touchstart 事件，如果另一个手指又放在了屏幕上，则会触发 gesturestart 事件，随后触发基于该手指的 touchstart 事件。</li>
+		<li>如果一个或两个手指在屏幕上滑动，将会触发 gesturechange 事件，但只要有一个手指移开，则会触发 gestureend 事件，紧接着又会触发 toucheend 事件。</li>
+		<li>gesture 事件好像在 安卓 系统上不能用。</li>
+	</ol>
+	<br>
+	<div style="margin-left:25px;">4、事件属性</div>
+	<div style="margin-left:50px;">
+	无论使用触摸还是手势事件，你都需要将这些事件转换为单独的触摸来使用它们，为此需要访问事件对象的一系列的属性：
+	<ol style="margin-left:30px;">
+		<li><code>targetTouches</code>：位于当前绑定事件的 DOM 元素上手指列表；</li>
+		<li><code>changedTouches</code>：页面上最新更改的所有触摸；</li>
+		<li><code>touches</code>：是与屏幕接触的所有手指的一个数组，而不仅是位于目标 DOM 元素上的那些；
+			<ol style="margin-left:30px;">
+				<li><code>targetTouches、changedTouches、touches</code> 分别包含稍微不同的触摸列表。
+				<li><code>targetTouches、touches</code> 分别包含当前位于屏幕上的手指列表，但 changedTouches 仅列出最后发生的触摸。<Br>
+					如果你在使用 touchend 或 gestureend 事件，那么这个属性非常重要。<Br>
+					在这两种情况下，屏幕上都不会再出现手指，因此 targetTouches 和 touches 应该为空，但你仍然可以通过查看 changedTouches 数组来了解最后发生的事情。<Br>
+					由于触摸属性都会生成数组，因此你可以使用 JavaScript 数组函数来访问它们。<Br>
+					这意味着，event.touches[0] 将返回第一次触摸，并且可以使用 event.touches.length 来计算当前存储的触摸数量。<Br>
+					查看单独触摸时，通过使用 event.targetTouches[0]，你也可以访问其它触摸，每个触摸会包含一些具体信息，<Br>
+					你可能会发现使用 event.targetTouches 和event.changedTouches 来代替 event.touches 更有用一些。<Br>
+				</li>
+			</ol>
+		</li>
+		<li><code>timeStamp</code>：表示事件生成的日期和时间；</li>
+		<li><code>touch</code>：对象中属性：
+			<ol style="margin-left:30px;">
+				<li><code>clientX、clientY</code>：相对于浏览器可视内容区域的坐标，与滚动条无关系</li>
+				<li><code>pageX、pageY</code>：相对于document的X或Y位置,与滚动条有关系</li>
+				<li><code>screenX、screenY</code>：相对于用户计算机屏幕的X或Y位置 </li>
+				<li><code>identifier</code>：一个数值，唯一标识触摸会话（touch session）中的当前手指。一般为从0开始的流水号（android4.1，uc）</li>
+				<li><code>radiusX/radiusY/rotationAngle</code>：画出大约相当于手指形状的椭圆形，分别为椭圆形的两个半径和旋转角度。初步测试浏览器不支持</li>
+				<li><code>target</code>：生成触摸的目标对象</li>
+			</ol>
+		</li>
+	</ol>
+	<br>
+	<h5 id="eventWeiTuo">事件委托</h5>
+	<div style="margin-left:25px;">如果在子元素上绑定事件，但是子元素又太多，可以在父元素上绑定事件。</div>
+	<div style="margin-left:25px;">1、提高性能。为每个子元素绑定事件，需要遍历每个子元素，而父元素只需绑定一次；</div>
+	<div style="margin-left:25px;">2、新添加的元素还会有之前的事件：</div>
+	<div style="margin-left:50px;">
+		因为事件在父元素上，所以可以找到每个子元素：
+		<pre>function test(){
+    var oUl = document.getElementById("ul");
+    var aLi = oUl.getElementsByTagName("li");
+    var oBtn = document.getElementById("btn");
+    var iNow = 4;
+
+    oUl.onmouseover = function(ev) {
+        var ev = ev || window.event;
+        var target = ev.target || ev.srcElement;
+        if (target.nodeName.toLowerCase() == "li") {
+            target.style.background = "red";
+        }
+    }
+    oUl.onmouseout = function(ev) {
+        var ev = ev || window.event;
+        var target = ev.target || ev.srcElement;
+        if (target.nodeName.toLowerCase() == "li") {
+            target.style.background = "";
+        }
+    }
+    oBtn.onclick = function(){
+        iNow ++;
+        var oLi = document.createElement("li");
+        oLi.innerHTML = 1111 *iNow;
+        oUl.appendChild(oLi);
+    }
+}</pre>
+	</div>
+	<div style="margin-left:25px;">jQuery 中事件委托：</div>
+	<div style="margin-left:50px;">
+		<ol>
+			<li><code>live</code><Br>
+				<span style="margin-left:25px;">缺点：</span><Br>
+				<ol style="margin-left:70px;">
+					<li>$() 函数会找到当前页面中的所有 td 元素并创建 jQuery 对象，但在确认事件目标时却不用这个 td 元素集合，<Br>
+					而是使用选择符表达式与 event.target 或其祖先元素进行比较，因而生成这个 jQuery 对象会造成不必要的开销；
+					</li>
+					<li>默认把事件绑定到 $(document) 元素，如果 DOM 嵌套结构很深，事件冒泡通过大量祖先元素会导致性能损失；</li>
+					<li>只能放在直接选择的元素后面，不能在连缀的 DOM 遍历方法后面使用，即 $("#info_table td").live... 可以，但 $("#info_table").find("td").live... 不行；</li>
+					<li>收集 td 元素并创建 jQuery 对象，但实际操作的却是 $(document) 对象，令人费解。</li>
+				</ol>
+
+				<span style="margin-left:25px;">避免生成不必要的 jQuery 对象：</span><Br>
+				<span style="margin-left:50px;">在 DOM 加载之前绑定事件：(function($){$("#info_table td").live("click",function(){/*显示更多信息*/});})(jQuery);</span><Br>
+				<span style="margin-left:25px;">避免事件冒泡造成的性能损失：</span><Br>
+				<span style="margin-left:50px;">$("td",$("#info_table")[0]).live("click", function(){/*显示更多信息*/});</span><Br>
+				<span style="margin-left:50px;">“受托方”就从默认的 $(document) 变成了 $("#info_table")[0]，节省了冒泡的旅程。</span><Br>
+				<span style="margin-left:50px;">“受托方”必须是一个单独的 DOM 元素。</span><Br>
+			<li><code>delegate</code><Br>
+				<span style="margin-left:25px;">$("#info_table").delegate("td", "click", function(){/*显示更多信息*/});</span><Br>
+				<span style="margin-left:25px;">优点：</span><Br>
+				<span style="margin-left:50px;">1：直接将目标元素选择符（"td"）、事件（"click"）及处理程序与“受托方” $("#info_table") 绑定，</span><Br>
+				<span style="margin-left:70px;">不额外收集元素、事件传播路径缩短、语义明确；</span><Br>
+				<span style="margin-left:50px;">2：支持在连缀的 DOM 遍历方法后面调用，即支持 $("table").find("#info").delegate...，支持精确控制。</span><Br>
+		</ol>
+	</div>
+	<div style="margin-left:25px;">注意：使用事件委托时，如果注册到目标元素上的其他事件处理程序使用.stopPropagation() 阻止了事件传播，那么事件委托就会失效</div><br>
+	
+	<h5 id="eventCT">事件穿透</h5>
+	<div style="margin-left:25px;">事件穿透的三种情况：</div>
+	<div style="margin-left:70px;">
+		<ol>
+			<li>在重叠的区域里，底层元素绑定 click 事件（或默认有 click 事件，比如 &lt;input>、&lt;a> 等），上层元素绑定 touch 事件，
+   如果 touch 事件触发后上层元素隐藏，就会造成穿透，即触发了底层元素上 click 事件；</li>
+			<li>在 1 中，底层元素默认有 click 事件，比如 &lt;input>、&lt;a> 等，也是相同效果；</li>
+			<li>页面 1 上有一个 div，在 div 上绑定 touch 事件，触发 touch 事件后，跳转到页面 2，在页面 2 上对应页面 1 div 的位置有一个 &lt;a>，那么 &lt;a> 也会被触发。</li>
+	</div>
+	<div style="margin-left:25px;">事件穿透原因：click 在 touch 之后延迟触发，等到 click 事件触发时，遮盖层已经不在了，浏览器会误认为是在被遮盖的元素上触发了 click。</div><br>
+	<div style="margin-left:25px;">在 IOS 调试过程中也遇到浏览器自身问题：</div>
+	<div style="margin-left:50px;">
+		前提条件：触发 div 的 touchend 事件时候，弹出对话框，并且对话框要在 div 的上面<br>
+		操作条件：长按 div，使 div 处于选中状态，触发 div 的 touchend 事件，此时 div 上的选中状态跑到了对话框上面。
+	</div><br>
+	<div style="margin-left:45px;">
+		<ol>
+			<li>对于第一种情况：自己通过 touchstart，touchmove，touchend，来模拟一个 click（tap）事件，这样除了防止穿透外，事件响应速度也会提高。</li>
+			<li>对于第二种情况：将 click 事件绑定到 body 上，让系统的 click 事件冒泡到 body 上被捕获，在 body 的 click 事件处理程序中根据被遮盖层标签类型做处理。
+				<div style="margin-left:25px;">比如是 &lt;input> 标签，根据 touchstart 中 target 与 click 中 target 进行比较，如果相同，说明点击的就是 &lt;input> 标签，让其自然获得焦点，否则就让其失去焦点。</div>
+				<div style="margin-left:25px;">如果是 &lt;a>，直接阻止默认事件。</div>
+			</li>
+			<li>对于第三种情况：fastclick 也解决不了，也就是说 fastclick 只能用在当前页面中。由于是页面跳转，300ms 延迟应该可以接受。</li>
+	</div><br>
+	<div style="margin-left:25px;">
+		实现只触发一次 click 事件：
+		<div style="margin-left:25px;">1、在 div 标签内绑定 ontouchend 事件：</div>
+		<pre style="margin-left:25px;">&lt;div id="productionInfo" ontouchend="test(this);">
+function test(thisObj) {
+    thisObj.addEventListener("click", function(){
+        thisObj.outerHTML = thisObj.outerHTML;
+        location.href = "url";
+    }, false);
+}</pre>
+<div style="margin-left:25px;">注意：因为“在标签内绑定的事件”不会因为自身 html 的位置变化而丢掉，但是使用 addEventListener 绑定的事件会丢掉，所以此时 click 事件只执行一次。</div>
+		
+		<div style="margin-left:25px;">2、在 div 上绑定 touchend 事件，touchend 的触发函数中绑定 click 事件。
+			<div style="margin-left:25px;">当然这个 click 事件只能执行一次就需要销毁，否则就会发生情况一中的事件穿透，
+			有的浏览器在返回到当前页面时候会刷新该页面，而有的不会，所以销毁这个 click 事件就变得必须了。使用 zepto.js 的 one() 绑定 click 事件；</div>
+		</div>
+	</div><br>
+	<div style="margin-left:25px;">
+		<p>fastclick 实现原理：</p>
+		<div style="margin-left:25px;">在 body 元素上绑定 touchstart、touchend 事件，事件冒泡到 body 层后，在 touchend 结束时立马执行 click 事件，
+			这样就解决了“点透”的问题，以及 300ms 延迟问题，300ms 延迟是因为浏览器为了实现用户双击屏幕放大页面的效果。
+			使用 fastclick 注意点：如果在目标元素上绑定 click 事件同时又绑定了touch 事件，那么在 touch 事件触发函数中不能阻止事件冒泡和浏览器默认行为，否则 fastclick 失效。
+		</div>
+		<div style="margin-left:25px;margin-top:15px;">
+			在同一个 dom 上绑定 touchend 和 click 事件，而且在 touchend 中使用 e.preventDefault()，在 Android 中是阻止不了触发 click 事件的，IOS 中是可以的。</pre>
+		</div>
+	</div><br>
+	<div style="margin-left:25px;">
+	还发现一个问题，在 touchend 事件中触发 click 事件，有问题：
+	<pre>list.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    list.click(); //click 在此处时候，一般安卓手机自带浏览器就不继续往下执行了，UC 浏览器是可以继续往下执行的
+    list.style.display = 'none';
+    setTimeout(function () {
+        list.style.display = '';
+    }, 1000);
+});</pre>
+</div>
+<br>
+	<h5 id="keyEvent">键盘事件</h5>
+	<div style="margin-left:25px;">
+	<table class="dataintable">
+		<tbody>
+			<tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onkeydown</td>
+				<td>用户按下任何键盘键（包括系统按钮，如箭头键和功能键）时发生。<br>IE 使用 event.keyCode 获取按键值，而 Netscape/Firefox/Opera 使用 event.which。兼容写法：keycode = e.keyCode || e.which;
+					<br>该事件回调函数中可以使用 <code>event.returnValue = true / false</code> 允许或禁止输入，但是中文输入法会出现 event.keyCode = 229 问题。
+				</td>
+			</tr>
+			<tr><td>onkeypress</td>
+				<td>用户放开任何字母数字键时发生。系统按钮(例如，箭头键和功能键)、汉字 无法得到识别，不触发该事件。</td>
+			</tr>
+			<tr><td>onkeyup</td>
+				<td>用户放开任何先前按下的键盘键时发生。</td>
+			</tr>
+			<tr><td>注意</td>
+				<td>当长按一个按键：如果是系统按钮，如箭头键和功能键，一直只触发 onkeydown；否则一直触发 onkeydown->onkeypress。<br>
+					onkeydown 、onkeypress 事件响应时，输入的字符并没有被系统接受，而响应 onkeyup 时，输入流已经被系统接受。
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="mouseEvent">鼠标事件</h5>
+	<div style="margin-left:25px;">
+	<table class="dataintable">
+		<tbody>
+			<tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onclick</td><td>鼠标左击事件</td></tr>
+			<tr><td>oncontextmenu</td>
+				<td>鼠标右击事件</td>
+			</tr>
+			<tr><td>ondblclick</td><td>鼠标双击事件</td></tr>
+			<tr><td>onmousedown</td><td>鼠标按键按下事件，包括“左键、右键、滚轮”按下</td></tr>
+			<tr><td>onmouseup</td><td>鼠标按键松开事件，包括“左键、右键、滚轮”被按下后松开<br>
+				注意：<br>
+				<span style="color:red;margin-left:25px;">如果是普通元素，鼠标按下后离开该元素，该事件不会触发；</span><br>
+				<span style="color:red;margin-left:25px;">如果是 document，鼠标离开也会触发。</span>
+			</td></tr>
+			<tr><td>onmouseenter</td><td>鼠标移到元素上触发事件，一般与 onmouseleave 结合使用，与 onmouseover 有区别</td></tr>
+			<tr><td>onmouseleave</td><td>鼠标离开元素事件，只有离开绑定事件的元素，才触发事件。</td></tr>
+			<tr><td>onmouseover</td>
+				<td>鼠标移到元素上触发事件，一般与 onmouseout 结合使用。<br>
+				与 onmouseenter 区别：<br>
+				<span style="margin-left:25px;">onmouseenter：鼠标移动到绑定事件的元素上，只触发一次事件，只要鼠标没有移出该元素，就不会再触发该事件。</span><br>
+				<span style="margin-left:25px;">onmouseover：如果绑定事件元素内部有子元素，那么鼠标在任何两个元素之间滑动切换时，都会触发该事件。</span><br>
+				<script>
+					function mouse1() {
+						document.getElementById("over").innerHTML = parseInt(document.getElementById("over").innerHTML)+1;
+					}
+					function clear1() {
+						document.getElementById("over").innerHTML = 0;
+					}
+					function mouse2() {
+						document.getElementById("enter").innerHTML = parseInt(document.getElementById("enter").innerHTML)+1;
+					}
+					function clear2() {
+						document.getElementById("enter").innerHTML = 0;
+					}
+					function mo1() {
+						document.getElementById("out").innerHTML = parseInt(document.getElementById("out").innerHTML)+1;
+					}
+					function clear3() {
+						document.getElementById("out").innerHTML = 0;
+					}
+					function mo2() {
+						document.getElementById("leave").innerHTML = parseInt(document.getElementById("leave").innerHTML)+1;
+					}
+					function clear4() {
+						document.getElementById("leave").innerHTML = 0;
+					}
+				</script>
+				<div style="position:relative;height:60px;margin-left:25px;">
+					<div style="position:absolute;top:0;left:0;width:80px;height:50px;background:red;" onmouseover="mouse1();" onmouseout="mo1()">
+						<div style="position:absolute;top:5px;left:0;width:50px;height:40px;background-color:blue;">
+							<div style="position:absolute;top:10px;left:0;width:20px;height:20px;background-color:yellow;"></div>
+						</div>
+					</div>
+					<div id="over" style="position:absolute;left:90px;top:10px;">0</div>
+					<div style="position:absolute;left:110px;top:10px;">onmouseover</div>
+					<div style="position:absolute;left:110px;top:30px;padding:2px 10px;border:1px solid #009BE1;cursor:pointer;" onclick="clear1();">clear</div>
+					<div style="position:absolute;top:0;left:250px;width:80px;height:50px;background:red;" onmouseenter="mouse2();">
+						<div style="position:absolute;top:5px;left:0;width:50px;height:40px;background-color:blue;">
+							<div style="position:absolute;top:10px;left:0;width:20px;height:20px;background-color:yellow;"></div>
+						</div>
+					</div>
+					<div id="enter" style="position:absolute;left:340px;top:10px;">0</div>
+					<div style="position:absolute;left:360px;top:10px;">onmouseenter</div>
+					<div style="position:absolute;left:360px;top:30px;padding:2px 10px;border:1px solid #009BE1;cursor:pointer;" onclick="clear2();">clear</div>
+				</div>
+				在移动设备中，可以通过把一个元素变成 clickable，来支持 onmouseover 事件，如下所示：<br>
+				<span style="margin-left:25px;color:violet;">&lt;span onmouseover = "..." onmouseout = "..." onclick = "void(0)">&lt;/span></span>
+				</td>
+			</tr>
+			<tr><td>onmouseout</td><td>鼠标离开元素事件，在任意两个子元素之间切换，都会触发该事件。
+				<div style="position:relative;height:60px;margin-left:25px;">
+					<div style="position:absolute;top:0;left:0;width:80px;height:50px;background:red;" onmouseout="mo1()">
+						<div style="position:absolute;top:5px;left:0;width:50px;height:40px;background-color:blue;">
+							<div style="position:absolute;top:10px;left:0;width:20px;height:20px;background-color:yellow;"></div>
+						</div>
+					</div>
+					<div id="out" style="position:absolute;left:90px;top:10px;">0</div>
+					<div style="position:absolute;left:110px;top:10px;">onmouseout</div>
+					<div style="position:absolute;left:110px;top:30px;padding:2px 10px;border:1px solid #009BE1;cursor:pointer;" onclick="clear3();">clear</div>
+					<div style="position:absolute;top:0;left:250px;width:80px;height:50px;background:red;" onmouseleave="mo2();">
+						<div style="position:absolute;top:5px;left:0;width:50px;height:40px;background-color:blue;">
+							<div style="position:absolute;top:10px;left:0;width:20px;height:20px;background-color:yellow;"></div>
+						</div>
+					</div>
+					<div id="leave" style="position:absolute;left:340px;top:10px;">0</div>
+					<div style="position:absolute;left:360px;top:10px;">onmouseleave</div>
+					<div style="position:absolute;left:360px;top:30px;padding:2px 10px;border:1px solid #009BE1;cursor:pointer;" onclick="clear4();">clear</div>
+				</div>
+			</td></tr>
+			<tr><td>onmousemove</td><td>鼠标移动事件</td></tr>
+			<tr><td colspan=2>坐标属性：</td></tr>
+			<tr><td>clientX</td><td>鼠标相对于<span style="color:red;">浏览器窗口可视区域</span>的 X 坐标，可视区域不包括工具栏和滚动条。<span>clientX：</span><span id="clientX"></span></td></tr>
+			<tr><td>clientY</td><td>鼠标相对于<span style="color:red;">浏览器窗口可视区域</span>的 Y 坐标，可视区域不包括工具栏和滚动条。<span>clientX：</span><span id="clientY"></span></td></tr>
+			<tr><td>pageX</td><td>鼠标相对于<span style="color:red;">页面左边</span>的偏移。IE8- 不支持。<span>pageX：</span><span id="pageX"></span><br>
+<pre>if ( event.pageX === undefined ) {
+    pageX = event.clientX + (document.body.scrollLeft || 
+	document.documentElement.scrollLeft);
+}</pre></td></tr>
+			<tr><td>pageY</td><td>鼠标相对于<span style="color:red;">页面顶部</span>的偏移。IE8- 不支持。<span>pageY：</span><span id="pageY"></span><br>
+<pre>if ( event.pageY === undefined ) {
+    pageY = event.clientY + (document.body.scrollTop || 
+	document.documentElement.scrollTop);
+}</pre>
+			</td></tr>
+<tr>
+	<td>offsetX</td>
+	<td>鼠标相对于<span style="color:Red;">绑定事件元素</span>左上角 border <span style="color:Red;">内交点</span>的 X 坐标。
+<br>
+		因此当鼠标位于元素的border上时，偏移值是一个负值。
+		<br>Firefox 不支持，可以使用 getBoundingClientRect() 方法计算坐标。</td>
+</tr>
+<tr>
+<td>offsetY</td>
+<td>鼠标相对于
+<span style="color:red;">绑定事件元素</span>左上角 border <span style="color:Red;">内交点</span>的 Y 坐标。
+<br>
+	因此当鼠标位于元素的border上时，偏移值是一个负值。
+		<br>Firefox 不支持，可以使用 getBoundingClientRect() 方法计算坐标。</td>
+</tr>
+<tr>
+<td>layerX</td>
+<td>FF：从绑定事件元素（包含）向外层查找，如果有元素 position 不是 static，layerX 就是鼠标相对于
+	<span style="color:Red;">那个元素</span>左上角 border
+		<span style="color:Red;">外交点</span>的 X 坐标；否则与 pageX 表现一致。
+		<br>
+IE：始终与 pageX 表现一致。<br>
+chrome：与 FF 有点区别，就是会再加上滚动条滚动的距离。</td>
+</tr>
+<tr>
+<td>layerY</td>
+<td>参见 layerX</td>
+</tr>
+			<tr><td>screenX</td><td>鼠标相对于<span style="color:red;">显示器屏幕</span>左上角的 X 坐标。</td></tr>
+			<tr><td>screenY</td><td>鼠标相对于<span style="color:Red;">显示器屏幕</span>左上角的 Y 坐标。</td></tr>
+			<tr><td>x、y</td><td>IE 中遇到 position:relative 元素有问题，firefox 不认识，所以用 clientX、clientY 代替。</td></tr>
+		</tbody>
+	</table>
+	<script>
+		document.body.addEventListener("mousemove",function(e){
+			document.getElementById("clientX").innerHTML = e.clientX;
+			document.getElementById("clientY").innerHTML = e.clientY;
+			document.getElementById("pageX").innerHTML = e.pageX;
+			document.getElementById("pageY").innerHTML = e.pageY;
+		});
+	</script>
+	</div>
+	<br>
+	<h5 id="printEvent">打印事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onafterprint<span style="color:red;">&lt;5></span></td>
+			<td>用户设置页面打印并且打印对话框已出现之后触发该事件。<br>
+				语法：<span style="color:blue;">&lt;element onafterprint="script"></span><br>
+				注意：<br>
+				<span style="color:red;margin-left:25px;">只有 IE 和 FF 支持 onafterprint 事件属性。</span><br>
+				<span style="color:red;margin-left:25px;">在 IE 中，onafterprint 属性在打印对话框出现之前而不是之后发生。</span><br>
+			</td></tr>
+			<tr><td>onbeforeprint<span style="color:red;">&lt;5></span></td>
+			<td>用户已设置页面打印之后立即触发，是在打印对话框出现之前。<br>
+				语法：<span style="color:blue;">&lt;element onbeforeprint="script"></span><br>
+				注意：<br>
+				<span style="color:red;margin-left:25px;">只有 IE 和 FF 支持 onbeforeprint 事件属性。</span><br>
+			</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="copyEvent">剪贴板事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>oncopy</td><td>该事件在用户拷贝元素内容时触发。（支持冒泡、可以取消事件）<br>
+				注意：<br>
+				<span style="margin-left:25px;">1、oncopy 事件在用户拷贝元素时也会触发，例如， 拷贝 &lt;img> 元素。</span><br>
+				<span style="margin-left:25px;">2、oncopy 事件通常用于 type="text" 的 &lt;input> 元素。</span><br>
+				<span style="margin-left:25px;">3、有三种拷贝方式：CTRL + C、浏览器 Edit 菜单中选择 "Copy"、右键上下文菜单中选择 "Copy"。</span><br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;input type="text" oncopy="myFunction()" value="尝试拷贝文本"></span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.oncopy=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.addEventListener("copy", myFunction);</span><br>
+			</td></tr>
+			<tr><td>oncut</td><td>该事件在用户剪切元素内容时触发。（支持冒泡、可以取消事件）<br>
+				注意：<br>
+				<span style="margin-left:25px;">1、如果元素不可编辑，有的浏览器不触发 oncut，除非设置 contenteditable 为 true。</span><br>
+				<span style="margin-left:25px;">2、oncut 事件通常应用在 type="text" 的 &lt;input> 元素中。</span><br>
+				<span style="margin-left:25px;">3、有三种拷贝方式：CTRL + X、浏览器 Edit 菜单中选择 "Cut"、右键上下文菜单中选择 "Cut"。</span><br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;input type="text" oncut="myFunction()" value="尝试拷贝文本"></span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.oncut=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.addEventListener("cut", myFunction);</span><br>
+				</td></tr>
+			<tr><td>onpaste</td><td>该事件在用户粘贴元素内容时触发。（支持冒泡、可以取消事件）<br>
+				注意：<br>
+				<span style="margin-left:25px;">1、如果元素不可编辑，有的浏览器不触发 onpaste，除非设置 contenteditable 为 true。</span><br>
+				<span style="margin-left:25px;">2、onpaste 事件通常应用在 type="text" 的 &lt;input> 元素中。</span><br>
+				<span style="margin-left:25px;">3、有三种拷贝方式：CTRL + V、浏览器 Edit 菜单中选择 "Paste"、右键上下文菜单中选择 "Paste"。</span><br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;input type="text" onpaste="myFunction()" value="尝试拷贝文本"></span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.onpaste=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">inputDom.addEventListener("paste", myFunction);</span><br>
+				</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="dragEvent">拖动事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>ondragstart<br> IE 9+</td><td>用户开始拖动元素或选择的文本时触发该事件。支持冒泡，可以取消该事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;p ondragstart="dragStart(event)" draggable="true" id="dragtarget">拖动我!&lt;/p></span><br>
+				<span style="color:violet;margin-left:25px;">dom.ondragstart = function(event) {};</span><br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("dragstart", function(event) {});</span><br>
+				<span style="margin-left:25px;"></span><br>
+				<span style="color:violet;margin-left:25px;">document.ondragstart = function(event) {};</span><br>
+				<span style="color:violet;margin-left:25px;">document.addEventListener("dragstart", function(event) {});</span><br>
+				<span style="margin-left:25px;">以上两种注册事件，会在页面上任何可拖动元素被拖动时触发。</span><br>
+			</td></tr>
+			<tr><td>ondrag</td><td>该事件在元素正在拖动时触发</td></tr>
+			<tr><td>ondragenter</td><td>拖动的元素或选择的文本进入到有效的放置目标时触发该事件</td></tr>
+			<tr><td>ondragleave</td><td>拖动的元素离开放置目标时触发该事件</td></tr>
+			<tr><td>ondragend</td><td>该事件在用户完成元素的拖动时触发</td></tr>
+			<tr><td>ondragover</td><td>拖动的元素或选择的文本正在拖动到放置目标时触发该事件</td></tr>
+			<tr><td>ondrop</td><td>	拖动的元素放置在目标区域时触发该事件</td></tr>
+		</tbody>
+	</table>
+	</div>	 
+	<br>
+	<h5 id="mediaEvent">多媒体（Media：&lt;audio>, &lt;video>）事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onabort<br> IE 9+</td><td>在视频 / 音频（audio/video）终止加载时触发事件。<br>
+				注意： Windows 7下的 Internet Explorer 11 浏览器不支持 onabort 事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onabort="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onabort=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("abort", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>oncanplay<br> IE 9+</td><td>在用户可以开始播放视频 / 音频时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video oncanplay="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.oncanplay=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("canplay", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>oncanplaythrough</td><td>在视频 / 音频可以正常播放且无需停顿和缓冲时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video oncanplaythrough="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.oncanplaythrough=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("canplaythrough", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>ondurationchange</td><td>在视频 / 音频的时长发生变化时触发事件。<br>
+				注意： 当视频/音频已经加载后，视频/音频的时长从 "NaN" 修改为正在的时长。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video ondurationchange="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.ondurationchange=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("durationchange", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onemptied</td><td>The event occurs when the current playlist is empty	</td></tr>
+			<tr><td>onended</td><td>在视频 / 音频播放结束时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onended="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onended=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("ended", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onerror</td><td>在视频 / 音频数据加载期间发生错误时触发事件。<br>
+				注意： Windows 7 下的 Internet Explorer 11 不支持 onerror 事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onerror="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onerror=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("error", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onloadeddata</td><td>在当前帧的数据加载完成，且还没有足够的数据播放视频 / 音频的下一帧时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onloadeddata="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onloadeddata=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("loadeddata", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onloadedmetadata</td><td>在指定视频 / 音频的元数据加载后触发事件。<br>
+				视频/音频的元数据包含: 时长，尺寸大小（视频），文本轨道。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onloadedmetadata="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onloadedmetadata=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("loadedmetadata", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onloadstart</td><td>在浏览器开始寻找指定视频 / 音频触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onloadstart="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onloadstart=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("loadstart", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onpause</td><td>在视频 / 音频暂停时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onpause="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onpause=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("pause", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onplay</td><td>在视频 / 音频开始播放时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onplay="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onplay=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("play", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onplaying</td><td>在视频 / 音频暂停或者在缓冲后准备重新开始播放时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onplaying="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onplaying=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("playing", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onprogress</td><td>在浏览器下载指定的视频 / 音频时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onprogress="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onprogress=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("progress", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onratechange</td><td>在视频 / 音频的播放速度发生改变时触发事件。<br>
+				该事件通过 Audio/Video 对象的 playbackRate属性调用, 该属性用于设置或返回视频 / 音频的当前播放速度。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onratechange="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onratechange=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("ratechange", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onseeked</td><td>在用户重新定位视频 / 音频的播放位置后触发事件。<br>
+				与 onseeked 事件相反的是 onseeking 事件。<br>
+				使用 currentTime 可以设置或返回视频 / 音频播放的当前位置 。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onseeked="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onseeked=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("seeked", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onseeking</td><td>在用户开始重新定位视频 / 音频时触发事件。<br>
+				与 onseeking 事件相反的是 onseeked 事件。<br>
+				使用 currentTime 可以设置或返回视频 / 音频播放的当前位置 。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onseeking="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onseeking=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("seeking", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onstalled</td><td>在浏览器获取媒体数据，但媒体数据不可用时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onstalled="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onstalled=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("stalled", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onsuspend</td><td>在浏览器读取媒体数据中止时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onsuspend="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onsuspend=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("suspend", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>ontimeupdate</td><td>在当前的播放位置发生改变时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video ontimeupdate="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.ontimeupdate=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("timeupdate", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onvolumechange</td><td>在音量发生改变时触发事件。	<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onvolumechange="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onvolumechange=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("volumechange", myFunction);</span><br>
+			</td></tr> 
+			<tr><td>onwaiting</td><td>在视频由于要播放下一帧而需要缓冲时触发事件。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">&lt;video onwaiting="myFunction()"></span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.onwaiting=function(){ myFunction() };</span><br>
+				<span style="color:violet;margin-left:25px;">videoDom.addEventListener("waiting", myFunction);</span><br>
+			</td></tr> 
+		</tbody>
+	</table>
+	</div>	 
+	<br>
+	<h5 id="animationEvent">动画事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>animationstart / webkitAnimationStart<br> IE 10+</td><td>该事件在 CSS 动画开始播放时触发。（支持冒泡、不可以取消事件）<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("animationstart", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("webkitAnimationStart", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">&lt;div onWebkitAnimationStart="myScript();"></span><br>
+			</td></tr>
+			<tr><td>animationend / webkitAnimationEnd <br> IE 10+<</td><td>该事件在 CSS 动画结束播放时触发。（支持冒泡、不可以取消事件）<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("animationend", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("webkitAnimationEnd", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">&lt;div onWebkitAnimationEnd="myScript();"></span><br>
+			</td></tr>
+			<tr><td>animationiteration / webkitAnimationIteration <br> IE 10+</td><td>该事件在 CSS 动画重复播放时触发。（支持冒泡、不可以取消事件）<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("animationiteration", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("webkitAnimationIteration", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">&lt;div onWebkitAnimationIteration="myScript();"></span><br>
+			</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="transitionEvent">过渡事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>transitionend / webkitTransitionEnd /<br>mozTransitionEnd / oTransitionEnd</td><td>该事件在 CSS 完成过渡后触发。（支持冒泡、可以取消事件）<br>
+				注意：如果过渡在完成前移除，例如 CSS transition-property 属性被移除，过渡事件将不被触发。<br>
+				用法：<br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("transitionend", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">dom.addEventListener("webkitTransitionEnd", myScript);</span><br>
+				<span style="color:violet;margin-left:25px;">&lt;div onWebkitTransitionEnd="myScript();"></span><br>
+			</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="formEvent">表单事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onchange</td><td>在表单元素的内容改变时触发该事件<br>
+					支持该事件的表单元素：&lt;input>, &lt;keygen>, &lt;select>, 和 &lt;textarea>。<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" onchange="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">dom.onchange = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">dom.addEventListener("change",function(){},false); 或 dom.attachEvent("onchange",function(){});</span><br>
+					<span style="margin-left:25px;color:violet;">$("#testEvent").on("change",function(){});</span><br>
+					<span style="color:red;">注意</span>：1、只有元素失去焦点才可以激活该事件，&lt;select> 元素除外。<br>
+					<span style="margin-left:35px;">2、通过 JS 改变值，不会触发 onchange 事件。</span>
+				</td></tr>
+			<tr><td>onpropertychange</td><td>任何元素的任何属性改变都会激活该事件。只有 IE 支持（IE11 不支持）。<br>
+					用法：<br>
+						<span style="margin-left:25px;color:violet;">&lt;input type="text" onpropertychange="alert(this.value);"/></span><br>
+						<span style="margin-left:25px;color:violet;">dom.onpropertychange = function(){}</span><span style="color:green;"> // 在绑定事件时就会触发一次该事件</span><br>
+						<span style="margin-left:25px;color:violet;">dom.attachEvent("onpropertychange",function(){});</span><br>
+					判断哪个属性发生变化：<br>
+					<span style="margin-left:25px;">1、原生方法绑定事件：用 event.propertyName 来判断。</span><br>
+					<span style="margin-left:25px;">2、jQuery 绑定事件：用 e.originalEvent.propertyName.toLowerCase() == "value" 判断。</span><br>
+					改变 input 的 value 时，需要判断是输入的，还是 js 赋值的，只要看当前元素是否有焦点：<br>
+					<div style="margin-left:25px;">var $focused = $(':focus'); <span style="color:green;"> // 使用 jQuery 获取有焦点的元素</span></div>
+					<div style="margin-left:25px;">var focused = document.activeElement;<span style="color:green;"> // 原生获取有焦点的元素</span></div>
+					<div style="margin-left:25px;">var hasFocus = $('foo').is(':focus');<span style="color:green;"> // 使用 jQuery 判断元素是否有焦点</span></div>
+					<div style="margin-left:25px;">elem === elem.ownerDocument.activeElement;<span style="color:green;"> // 原生判断元素是否有焦点</span></div>
+					<span style="color:red;">注意</span>：1、IE9 中有个 BUG，使用键盘 backspace、delete 删除内容时不触发该事件。</span><br>
+					<span style="margin-left:55px;">解决办法：监听 keyup 事件，判断 keyCode 是否是 8（backspace）或 46（delete）。</span><br>
+			</td></tr>
+			<tr><td>oninput <br> IE 9+</td>
+				<td>元素获取用户输入时触发<br>
+					支持该事件的表单元素：&lt;input>可输入标签、&lt;textarea><br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" oninput="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">dom.oninput=function(){}</span><br>
+					<span style="margin-left:25px;color:violet;">dom.addEventListener("input",function(){},false); 或 dom.attachEvent("oninput",function(){});</span><br>
+					<span style="margin-left:25px;color:violet;">$("#testEvent").on("input",function(){});</span><br>
+					<span style="color:red;">注意</span>：1、通过 JS 改变值，不触发该事件。</span><br>
+					<span style="margin-left:35px;">2、IE9 中有个 BUG，使用键盘 backspace、delete 删除内容时不触发该事件。</span><br>
+					<span style="margin-left:55px;">解决办法：监听 keyup 事件，判断 keyCode 是否是 8（backspace）或 46（delete）。</span><br>
+				</td>
+			</tr>
+			<tr><td>onblur</td><td>元素失去焦点时触发<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" onblur="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.onblur = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.addEventListener("blur", myScript);</span><br>
+			</td></tr>
+			<tr><td>onfocus</td><td>元素获取焦点时触发<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" onfocus="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.onfocus = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.addEventListener("focus", myScript);</span><br>
+			</td></tr>
+			<tr><td>onfocusin</td><td>元素即将获取焦点时触发。支持冒泡，不可以取消该事件。<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" onfocusin="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.onfocusin = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.addEventListener("focusin", myScript);</span><br>
+					注意：<br>
+					<span style="margin-left:25px;">1、onfocusin 与 onfocus 主要区别：onfocus 事件不支持冒泡。因此要想知道元素或者其子元素是否获取焦点，要用 onfocusin 事件。</span><br>
+					<span style="margin-left:50px;color:violet;">&lt;div id="parent" onfocusin="f1();"></span><br>
+					<span style="margin-left:75px;color:violet;">&lt;input type="text" id="child" onfocusin="f2();"/></span><br>
+					<span style="margin-left:50px;color:violet;">&lt;/div></span><br>
+					<span style="margin-left:50px;">f2() 执行之后，f1() 紧接着执行。而 onfocus 事件只执行 f2()。</span><br>
+					<span style="margin-left:25px;">2、虽然 FF 不支持 onfocusin 事件，但可以通过使用 onfocus（使用addEventListener()方法的可选参数 useCapture）的捕获监听事件</span><br>
+					<span style="margin-left:45px;">来查看元素或其子元素是否获取焦点。</span><br>
+					<span style="margin-left:50px;color:violet;">child.addEventListener("focus", function(){alert("1111")}, true);</span><br>
+					<span style="margin-left:50px;color:violet;">parent.addEventListener("focus", function(){alert("2222")}, true);</span><br>
+					<span style="margin-left:50px;">先弹出 "222"，再弹出 "111"。</span><br>
+					<span style="margin-left:25px;">3、FF 不支持该事件。</span><br>
+					<span style="margin-left:25px;">4、dom.onfocusin = function(){} 绑定事件可能无法正常工作。 通过使用 addEventListener() 方法可以正常工作。</span><br>
+			</td></tr>
+			<tr><td>onfocusout</td><td>元素即将失去焦点时触发。支持冒泡，不可以取消该事件。<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="text" onfocusout="alert(this.value);"/></span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.onfocusout = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">inputDom.addEventListener("focusout", myScript);</span><br>
+					注意：<br>
+					<span style="margin-left:25px;">1、onfocusout 与  onblur 主要区别：onblur 事件不支持冒泡。因此要想知道元素或者其子元素是否失去焦点，要用 onfocusout 事件。</span><br>
+					<span style="margin-left:50px;color:violet;">&lt;div id="parent" onfocusout="f1();"></span><br>
+					<span style="margin-left:75px;color:violet;">&lt;input type="text" id="child" onfocusout="f2();"/></span><br>
+					<span style="margin-left:50px;color:violet;">&lt;/div></span><br>
+					<span style="margin-left:50px;">f2() 执行之后，f1() 紧接着执行。而 onfocus 事件只执行 f2()。</span><br>
+					<span style="margin-left:25px;">2、虽然 FF 不支持 onfocusout 事件，但可以通过使用 onblur（使用addEventListener()方法的可选参数 useCapture）的捕获监听事件</span><br>
+					<span style="margin-left:45px;">来查看元素或其子元素是否失去焦点。</span><br>
+					<span style="margin-left:50px;color:violet;">child.addEventListener("blur", function(){alert("1111")}, true);</span><br>
+					<span style="margin-left:50px;color:violet;">parent.addEventListener("blur", function(){alert("2222")}, true);</span><br>
+					<span style="margin-left:50px;">先弹出 "222"，再弹出 "111"。</span><br>
+					<span style="margin-left:25px;">3、FF 不支持该事件。</span><br>
+					<span style="margin-left:25px;">4、dom.onfocusout = function(){} 绑定事件可能无法正常工作。 通过使用 addEventListener() 方法可以正常工作。</span><br>
+			</td></tr>
+			<tr><td>onreset</td><td>表单重置时触发。支持冒泡，支持取消该事件。<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;form type="text" onreset="alert(this.value);"></span><br>
+					<span style="margin-left:25px;color:violet;">formDom.onreset = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">formDom.addEventListener("reset", myScript);</span><br>
+			</td></tr>
+			<tr><td>onsearch</td><td>输入框获得焦点时用户按下“回车”按键，或点击输入框的“搜索”按钮时触发。支持冒泡，不支持取消该事件。<br>
+					<span style="color:red;">只支持 &lt;input type="search"> 表单元素。</span><br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="search" id="myInput" onsearch="myFunction()"></span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.onsearch = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.addEventListener("search", myScript);</span><br>
+					注意：<br>
+					<span style="margin-left:25px;">IE、FF 不支持。</span><br>
+			</td></tr>
+			<tr><td>onselect</td><td>文本框中的文本被选中时触发<br>
+					<span style="color:red;">只支持 &lt;input>、&lt;keygen> 和 &lt;textarea> 表单元素。</span><br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="search" id="myInput" onselect="myFunction()"></span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.onselect = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.addEventListener("select", myScript);</span><br>
+			</td></tr>
+			<tr><td>onselectstart</td><td>开始选择事件，一般用于禁止选择文本，FF 不支持<br>
+					<span style="color:red;">不支持 &lt;input>、&lt;keygen> 和 &lt;textarea> 元素。</span><br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;input type="search" id="myInput" onselectstart="return false;"></span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.onselectstart = function(){ return false; };</span><br>
+					<span style="margin-left:25px;color:violet;">searchDom.addEventListener("selectstart", myScript);</span><br>
+			</td></tr>
+			<tr><td>onsubmit</td><td>表单提交时触发。支持冒泡，不支持取消该事件。<br>
+					支持 &lt;form>、&lt;keygen> 元素。<br>
+					用法：<br>
+					<span style="margin-left:25px;color:violet;">&lt;form onsubmit="myFunction()"></span><br>
+					<span style="margin-left:25px;color:violet;">formDom.onsubmit = function(){};</span><br>
+					<span style="margin-left:25px;color:violet;">formDom.addEventListener("submit", myScript);</span><br>
+			</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="frameEvent">框架/对象（Frame/Object）事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td><del>onabort</del></td><td>图像的加载被中断，只有 IE 支持。( &lt;object>)</td></tr>
+			<tr><td>onbeforeunload</td>
+				<td>该事件在即将离开页面（刷新或关闭）时触发<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">&lt;body onbeforeunload="return myFun();"> function myFun() {return "确定离开？";}</span><br>
+				<span style="margin-left:25px;color:violet;">window.onbeforeunload=function(event){ event.returnValue = "确定离开？";};</span><br>
+				<span style="margin-left:25px;color:violet;">window.addEventListener("beforeunload", function(event) {event.returnValue = "确定离开？";});</span><br>
+				<span style="color:red;">在 Firefox 浏览器中，不显示自定义信息。360、souhu等一些浏览器不支持该事件。</span><br>
+				</td>
+			</tr>
+			<tr><td>onerror</td>
+				<td>在加载<span style="color:violet;margin:0 5px;">文档</span>或<span style="color:violet;margin:0 5px;">图像</span>发生错误时触发。 ( &lt;object>, &lt;body>和 &lt;frameset>)
+					<br>img 用法：<br>
+					<span style="margin-left:25px;color:violet;">1、&lt;img src="image.gif" id="myImg" onerror="myFunction()"></span><br>
+					<span style="margin-left:25px;color:violet;">2、imgDom.onerror = function() {myFunction()};</span><br>
+					<span style="margin-left:25px;color:violet;">3、imgDom.addEventListener("error", myFunction);</span><br>
+					<span style="margin-left:25px;color:violet;">4、var img = new Image(); img.onerror = function(){};</span><br>
+					window 用法，js 报错时触发：<br>
+					<span style="margin-left:25px;color:violet;">window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {}</span><br>
+					<span style="margin-left:50px;color:green;">errorMessage<span style="margin-left:50px;">错误信息</span></span><br>
+					<span style="margin-left:50px;color:green;">scriptURI<span style="margin-left:75px;">出错的文件</span></span><br>
+					<span style="margin-left:50px;color:green;">lineNumber<span style="margin-left:60px;">出错代码的行号</span></span><br>
+					<span style="margin-left:50px;color:green;">columnNumber<span style="margin-left:35px;">出错代码的列号</span></span><br>
+					<span style="margin-left:50px;color:green;">errorObj<span style="margin-left:80px;">错误的详细信息，Anything</span></span><br>
+					<span style="margin-left:50px;">使用中要注意兼容性，老版本浏览器一般只有前三个参数。</span><br>
+					<span style="margin-left:25px;">js 和页面如果<span style="margin-left:5px;color:violet;">不在同域名下</span>，需要在 &lt;script> 标签内添加 crossorigin 属性才能获得更多错误信息，</span><br>
+					<span style="margin-left:25px;">并且配置一下服务器，设置静态资源 Javascript 的 Response 为 Access-Control-Allow-Origin。</span><br>
+					像<span style="color:blue;">&lt;link href="" rel="stylesheet" onerror="alert('error');" />、&lt;script src="" onerror="alert('error');">&lt;/script></span>也有 <code>onerror</code> 事件。
+					<span style="margin-left:25px;">IE 中 &lt;link> 捕捉不到 onerror 事件。</span><br>
+					一般用 try() catch(event) {} 捕获异常。<br>
+				</td>
+			</tr>
+			<tr>
+				<td>onhashchange<br> IE8+</td>
+				<td>该事件在当前 URL 的锚部分发生修改时触发。<br>
+					绑定事件：<br>
+					<span style="margin-left:25px;color:violet;">&lt;body onhashchange="myFunction()"></span><br>
+					<span style="margin-left:25px;color:violet;">document.body.onhashchange = function() {};</span><br>
+					<span style="margin-left:25px;color:violet;">window.onhashchange = function() {};</span><br>
+					<span style="margin-left:25px;color:violet;">window.addEventListener("hashchange", myFunction);</span><br>
+					触发事件方法：<br>
+					<span style="margin-left:25px;">通过设置 Location 对象的 location.hash 或 location.href 属性修改锚部分</span><br>
+					<span style="margin-left:25px;">使用不同书签导航到当前页面（使用 "后退" 或 "前进" 按钮）</span><br>
+					<span style="margin-left:25px;">点击锚链接</span><br>
+				</td>
+			</tr>
+			<tr><td id="__onload">onload</td><td>页面或一幅图像完成加载。<br>
+				img 用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;img src="image.gif" id="myImg" onload="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、imgDom.onload = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">3、imgDom.addEventListener("load", myFunction);</span><br>
+				<span style="margin-left:25px;color:violet;">4、var img = new Image(); img.onload = function(){};</span><br>
+				页面用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;body onload="init();"></span><br>
+				<span style="margin-left:25px;color:violet;">2、window.onload=function(){};</span><br>
+				以下标签支持 onload：<br>
+				<span style="margin-left:25px;">&lt;body>, &lt;iframe>, &lt;img>, &lt;input type="image">, &lt;link>, &lt;script>, &lt;style></span><br>
+			</td></tr>
+			<tr><td>onpageshow <span style="color:red;"> [5]</span><br>IE11+</td><td>该事件在用户每次访问页面时触发。<br>
+				与 onload 事件区别：<br>
+				<span style="margin-left:25px;">onload 事件在页面第一次加载时触发，如果之后页面从浏览器缓存中读取，则不触发；</span><br>
+				<span style="margin-left:25px;">onpageshow 事件在每次加载页面时触发。</span><br>
+				可以使用 PageTransitionEvent 对象的 persisted 属性来判断页面是直接从服务器上载入还是从缓存中读取。 <br>
+				如果页面从浏览器的缓存中读取，该属性返回 ture，否则返回 false。<br>
+				PageTransitionEvent 是 onpageshow 事件的 event 事件类型。<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;body onpageshow="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、bodyDom.onpageshow = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">3、window.addEventListener("pageshow", myFunction);</span><br>
+			</td></tr>
+			<tr><td>onpagehide<span style="color:red;"> [5]</span><br>IE11+</td><td>该事件在用户离开当前页面时触发<br>
+				离开网页有多种方式：点击一个链接，刷新页面，提交表单，关闭浏览器等。<br>
+				onpagehide 事件有时可以替代 onunload 事件，但 onunload 事件触发后无法缓存页面。<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;body onpagehide="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、bodyDom.onpagehide = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">3、window.addEventListener("pagehide", myFunction);</span><br>
+			</td></tr>
+			<tr><td>onresize</td><td>窗口或框架被重新调整大小。<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;body onresize="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、bodyDom.onresize = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">3、window.onresize = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">4、window.addEventListener("resize", myFunction);</span><br>
+			</td></tr>
+			<tr><td>onscroll</td><td>元素滚动条在滚动时触发的事件。<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;div onscroll="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、divDom.onscroll = function() {myFunction()};</span><br>
+				<span style="margin-left:25px;color:violet;">3、divDom.addEventListener("scroll", myFunction);</span><br>
+			</td></tr>
+			<tr><td>onunload</td><td>用户退出页面。 ( &lt;body> 和 &lt;frameset>)<br>
+				用法：<br>
+				<span style="margin-left:25px;color:violet;">1、&lt;body onunload="myFunction()"></span><br>
+				<span style="margin-left:25px;color:violet;">2、window.onunload = function() {myFunction()};</span><br>
+			</td></tr>
+		</tbody>
+	</table>
+	</div>
+	<br>
+	<h5 id="otherEvent">其他事件</h5>
+	<div style="margin-left:25px;">
+		<table class="dataintable">
+			<tbody><tr><th style="width:27%;">属性</th><th>描述</th></tr>
+			<tr><td>onmessage</td><td>该事件通过或者从对象(WebSocket, Web Worker, Event Source 或者子 frame 或父窗口)接收到消息时触发</td></tr>
+			<tr><td>onmousewheel</td><td>已废弃。 使用 onwheel 事件替代</td></tr>
+			<tr><td>ononline</td><td>该事件在浏览器开始在线工作时触发</td></tr>
+			<tr><td>onoffline</td><td>该事件在浏览器开始离线工作时触发</td></tr>
+			<tr><td>onpopstate</td><td>该事件在窗口的浏览历史（history 对象）发生改变时触发。 event occurs when the window's history changes</td></tr>
+			<tr><td>onshow</td><td>该事件当 &lt;menu> 元素在上下文菜单显示时触发</td></tr>
+			<tr><td>onstorage</td><td>该事件在 Web Storage(HTML 5 Web 存储)更新时触发</td></tr>
+			<tr><td>ontoggle</td><td>该事件在用户打开或关闭 &lt;details> 元素时触发</td></tr>
+			<tr><td>onwheel</td><td>该事件在鼠标滚轮在元素上下滚动时触发</td></tr>
+		</tbody>
+	</table>
+	</div>
+	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+</div>
+ </body>
+ </html>
